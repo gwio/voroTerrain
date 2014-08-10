@@ -12,6 +12,7 @@
 CellPoint::CellPoint(ofVec2f point_, int id_) {
     point = point_;
     iD = id_;
+    ownVertex.clear();
     
 }
 

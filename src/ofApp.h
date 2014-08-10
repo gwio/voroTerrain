@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ofxVoronoi.h"
+#include "ofxVoronoi2D.h"
 #include "voronoiData.h"
 
 struct cellDist {
@@ -32,15 +32,20 @@ class ofApp : public ofBaseApp{
 		void gotMessage(ofMessage msg);
     
     
-    ofxVoronoi voronoi;
+    ofxVoronoi2D voronoi;
+    vector<ofVec2f> pointBag;
+    ofRectangle voroRect;
+
     
     vector<CellPoint> cellPoints;
     vector<VertexPoint> vertexPoints;
+    vector<ofVec2f> midPoints;
+
     
     int counter;
     
-    bool checkCorner(ofVec2f);
+    ofMesh voroMesh;
+    
     bool checkRand(ofVec2f);
 
-    vector<ofVec2f> midPoints;
 };

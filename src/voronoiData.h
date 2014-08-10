@@ -20,9 +20,8 @@ public:
     CellPoint(ofVec2f,int);
     ofVec2f point;
     int iD;
-    //vector<EdgePoint> ownEdgePoints;
-  //  VoronoiRegion* region;
-};
+    vector<VertexPoint*> ownVertex;
+   };
 
 class VertexPoint {
     
