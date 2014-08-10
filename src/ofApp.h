@@ -39,6 +39,7 @@ class ofApp : public ofBaseApp{
     
     vector<CellPoint> cellPoints;
     vector<VertexPoint> vertexPoints;
+    vector<VoroEdge> edges;
     vector<ofVec2f> midPoints;
 
     
@@ -47,5 +48,7 @@ class ofApp : public ofBaseApp{
     ofMesh voroMesh;
     
     bool checkRand(ofVec2f);
+    
+    void generateVoro();
 
 };
