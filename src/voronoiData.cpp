@@ -17,6 +17,9 @@ CellPoint::CellPoint(ofVec2f point_, int id_) {
     ownVertex.clear();
     ownEdges.clear();
     cellMesh.clear();
+    water = false;
+    hasHeight = false;
+    isCoast = false;
 }
 
 void CellPoint::drawCellPoint() {
@@ -70,7 +73,22 @@ void CellPoint::makeCellMesh() {
 }
 
 void CellPoint::drawCellMesh() {
+    
+    if (cellMesh.getNumVertices() != 0) {
     cellMesh.draw();
+    }
+}
+
+void CellPoint::setCellColor(ofColor col_) {
+    
+    
+    
+    if (cellMesh.getNumVertices() != 0) {
+        cellMesh.clearColors();
+        for (int i = 0; i < cellMesh.getNumVertices(); i++) {
+            cellMesh.addColor(col_);
+        }
+    }
 }
 
 //---------------------------------------------------------------------

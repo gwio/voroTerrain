@@ -48,6 +48,8 @@ class ofApp : public ofBaseApp{
     ofMesh voroMesh;
     
     bool checkRand(ofVec2f);
+    bool checkCoast(ofVec2f);
+
     
     void generateVoro();
 

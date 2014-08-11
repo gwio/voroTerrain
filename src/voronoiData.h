@@ -31,6 +31,14 @@ public:
     
     void makeCellMesh();
     void drawCellMesh();
+    void setCellColor(ofColor);
+    
+    //terrainstuff
+    
+    bool water;
+    bool hasHeight;
+    float elevation;
+    bool isCoast;
    };
 
 //---------------------------------------------------------------------

@@ -1,15 +1,66 @@
 #include "ofApp.h"
 
-#define CELLS 400
+#define CELLS 600
 //--------------------------------------------------------------
 void ofApp::setup(){
     counter = 0;
-  //  ofDisableAntiAliasing();
+    //  ofDisableAntiAliasing();
     ofEnableAlphaBlending();
     
     generateVoro();
     
-   }
+    //sketch for terrain generation
+    
+    for (int i = 0; i < cellPoints.size(); i++) {
+        for (int j = 0; j < cellPoints[i].ownVertex.size(); j++) {
+            if ( checkCoast( cellPoints[i].ownVertex[j]->point )){
+                cellPoints[i].water = true;
+                cellPoints[i].setCellColor(ofColor::darkBlue);
+                break;
+            }
+        }
+    }
+    
+    
+    //set highest elevation
+    float tempDist;
+    tempDist = 1000*1000;
+    int centerCell;
+    ofVec2f centerP = ofVec2f(ofGetWidth()/2 + ofRandom(-100,100), ofGetHeight()/2 + ofRandom(-100,100) );
+    for (int i = 0; i < cellPoints.size(); i++) {
+        float tempLen = (cellPoints[i].point-centerP).lengthSquared();
+        if ( tempLen < tempDist) {
+            tempDist = tempLen;
+            centerCell = i;
+        };
+    }
+    
+    
+    cellPoints[centerCell].elevation = 255;
+    
+    cellPoints[centerCell].setCellColor(ofColor::whiteSmoke);
+    
+    
+    //set the rest elevation
+    
+    for (int i = 0; i < cellPoints.size(); i++) {
+        if ((i!=centerCell) && !cellPoints[i].water){
+            for (int j = 0; j < cellPoints[i].ownEdges.size(); j++) {
+                if ( ((cellPoints[i].ownEdges[j]->cellA->water) || (cellPoints[i].ownEdges[j]->cellB->water)) ){
+                    cellPoints[i].elevation = 0;
+                    cellPoints[i].setCellColor(ofColor(40));
+                    cellPoints[i].isCoast = true;
+                    break;
+                } else {
+                    float distTo = (cellPoints[i].point - cellPoints[centerCell].point).length();
+                    distTo = ofMap(distTo, 0, 500, 255, 40);
+                    cellPoints[i].elevation = ofClamp(distTo, 40, 255) ;
+                    cellPoints[i].setCellColor(ofColor( ofClamp(distTo, 40, 255) ));
+                }
+            }
+        }
+    }
+}
 
 
 
@@ -22,10 +73,11 @@ void ofApp::update(){
 void ofApp::draw(){
     
     ofBackground(ofColor::fromHsb(150, 55, 60));
+    ofBackground(ofColor::darkBlue);
     
     //tempMesh.draw();
     
-   
+    
     
     /*
      for (int i = 0; i <cellPoints.size() ; i++) {
@@ -36,12 +88,15 @@ void ofApp::draw(){
     
     
     for (int i = 0; i < cellPoints.size(); i++) {
+        cellPoints[i].drawCellMesh();
+        
         ofSetColor(255,255, 255,40);
         
-       // cellPoints[i].drawCellPoint();
-        ofSetColor(200, 200, 200,10);
-       // cellPoints[i].drawOwnVertex();
-        cellPoints[i].drawCellMesh();
+        // cellPoints[i].drawCellPoint();
+        ofSetColor(200, 200, 200,50);
+        cellPoints[i].drawOwnVertex();
+        if (!cellPoints[i].water) {
+        }
     }
     
     
@@ -61,12 +116,12 @@ void ofApp::draw(){
     }
     
     
-  /*
-    for (int i = 0; i < edges.size(); i++) {
-        ofSetColor(ofColor::fromHsb(120, 15, 220));
-        edges[i].drawEdge();
-    }
-    */
+    /*
+     for (int i = 0; i < edges.size(); i++) {
+     ofSetColor(ofColor::fromHsb(120, 15, 220));
+     edges[i].drawEdge();
+     }
+     */
     
     //voroMesh.drawWireframe();
     ofSetColor(255);
@@ -81,6 +136,13 @@ void ofApp::keyPressed(int key){
     
     if (key == OF_KEY_LEFT) {
         counter--;
+    }
+    
+    if (key == 's' ){
+        ofImage temp;
+        temp.grabScreen(0, 0, ofGetWidth(), ofGetHeight());
+        temp.resize(ofGetWidth()/2, ofGetHeight()/2);
+        temp.saveImage( ofToString( ofGetElapsedTimef()+ofRandom(1000))+ ".png");
     }
 }
 
@@ -133,6 +195,15 @@ bool ofApp::checkRand(ofVec2f p_) {
             (p_.x > ofGetWidth()-0.5 ) ||
             (p_.y < 0.5) ||
             (p_.y > ofGetHeight()-0.5 )
+            );
+}
+
+bool ofApp::checkCoast(ofVec2f p_) {
+    return (
+            (p_.x < ofRandom(50,100)) ||
+            (p_.x > ofGetWidth()-ofRandom(50,100)) ||
+            (p_.y < ofRandom(50,100)) ||
+            (p_.y > ofGetHeight()-ofRandom(50,100))
             );
 }
 
@@ -350,5 +421,5 @@ void ofApp::generateVoro() {
     for (int i = 0; i < cellPoints.size(); i++) {
         cellPoints[i].makeCellMesh();
     }
-
+    
 }
