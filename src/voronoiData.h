@@ -20,6 +20,7 @@ class CellPoint {
 public:
     CellPoint(ofVec2f,int);
     ofVec2f point;
+    ofVec2f centroid;
     int iD;
     ofMesh cellMesh;
     vector<VertexPoint*> ownVertex;

@@ -70,6 +70,8 @@ void CellPoint::makeCellMesh() {
         cellMesh.addVertex(ownEdges[i]->ptB->point);
 
     }
+    
+    centroid = cellMesh.getCentroid();
 }
 
 void CellPoint::drawCellMesh() {

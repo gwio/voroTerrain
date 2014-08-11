@@ -33,7 +33,6 @@ class ofApp : public ofBaseApp{
     
     
     ofxVoronoi2D voronoi;
-    vector<ofVec2f> pointBag;
     ofRectangle voroRect;
 
     vector<ofVec2f> voroStartPoints;
@@ -52,6 +51,6 @@ class ofApp : public ofBaseApp{
     bool checkCoast(ofVec2f);
 
     
-    void generateVoro(vector<ofVec2f>*);
+    void generateVoro(vector<ofVec2f>);
 
 };
