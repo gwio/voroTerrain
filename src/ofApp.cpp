@@ -1,13 +1,20 @@
 #include "ofApp.h"
 
-#define CELLS 600
+#define CELLS 300
 //--------------------------------------------------------------
 void ofApp::setup(){
+    voroStartPoints.clear();
+    
+    for (int i= 0; i < CELLS; i++) {
+        ofVec2f    tPoint = ofVec2f(ofRandom(ofGetWidth()), ofRandom(ofGetHeight()));
+        voroStartPoints.push_back(tPoint);
+    }
+    
     counter = 0;
     //  ofDisableAntiAliasing();
     ofEnableAlphaBlending();
     
-    generateVoro();
+    generateVoro(&voroStartPoints);
     
     //sketch for terrain generation
     
@@ -207,7 +214,7 @@ bool ofApp::checkCoast(ofVec2f p_) {
             );
 }
 
-void ofApp::generateVoro() {
+void ofApp::generateVoro( vector<ofVec2f>* startPoints_) {
     
     
     cellPoints.clear();
@@ -220,12 +227,11 @@ void ofApp::generateVoro() {
     //add cell points
     
     
-    for (int i = 0; i < CELLS; i++) {
-        ofVec2f    tPoint = ofVec2f(ofRandom(ofGetWidth()), ofRandom(ofGetHeight()));
+    for (int i = 0; i < startPoints_->size(); i++) {
         
-        cellPoints.push_back( CellPoint(tPoint,i) );
+        cellPoints.push_back( CellPoint(startPoints_->at(i),i) );
         
-        pointBag.push_back(tPoint);
+      //  pointBag.push_back();
         
         
     }
@@ -233,7 +239,7 @@ void ofApp::generateVoro() {
     
     
     voroRect = ofRectangle(0, 0, ofGetWidth(), ofGetHeight());
-    voronoi.compute(pointBag, voroRect);
+    voronoi.compute(*startPoints_, voroRect);
     
     
     //add all cell vertices to vertexPoints, check for dublicates
