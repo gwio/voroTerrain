@@ -21,12 +21,16 @@ public:
     CellPoint(ofVec2f,int);
     ofVec2f point;
     int iD;
+    ofMesh cellMesh;
     vector<VertexPoint*> ownVertex;
     vector<VoroEdge*> ownEdges;
     
     void drawCellPoint();
     void drawOwnVertex();
     void drawNeighbours();
+    
+    void makeCellMesh();
+    void drawCellMesh();
    };
 
 //---------------------------------------------------------------------

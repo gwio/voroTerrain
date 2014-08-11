@@ -1,10 +1,10 @@
 #include "ofApp.h"
 
-#define CELLS 100
+#define CELLS 400
 //--------------------------------------------------------------
 void ofApp::setup(){
     counter = 0;
-    ofDisableAntiAliasing();
+  //  ofDisableAntiAliasing();
     ofEnableAlphaBlending();
     
     generateVoro();
@@ -25,13 +25,7 @@ void ofApp::draw(){
     
     //tempMesh.draw();
     
-    ofxSegmentIterator it = voronoi.edges();
-    for(; it; ++it){
-        ofxSegment s = *it;
-        ofSetColor(155,0,0);
-        // ofLine(s.p1, s.p2);
-    }
-    
+   
     
     /*
      for (int i = 0; i <cellPoints.size() ; i++) {
@@ -44,9 +38,10 @@ void ofApp::draw(){
     for (int i = 0; i < cellPoints.size(); i++) {
         ofSetColor(255,255, 255,40);
         
-        cellPoints[i].drawCellPoint();
+       // cellPoints[i].drawCellPoint();
         ofSetColor(200, 200, 200,10);
-        cellPoints[i].drawOwnVertex();
+       // cellPoints[i].drawOwnVertex();
+        cellPoints[i].drawCellMesh();
     }
     
     
@@ -66,11 +61,12 @@ void ofApp::draw(){
     }
     
     
+  /*
     for (int i = 0; i < edges.size(); i++) {
         ofSetColor(ofColor::fromHsb(120, 15, 220));
         edges[i].drawEdge();
     }
-    
+    */
     
     //voroMesh.drawWireframe();
     ofSetColor(255);
@@ -349,6 +345,10 @@ void ofApp::generateVoro() {
         edges[i].cellB->ownEdges.push_back(&edges[i]);
         
         
+    }
+    
+    for (int i = 0; i < cellPoints.size(); i++) {
+        cellPoints[i].makeCellMesh();
     }
 
 }

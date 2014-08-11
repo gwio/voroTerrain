@@ -16,7 +16,7 @@ CellPoint::CellPoint(ofVec2f point_, int id_) {
     iD = id_;
     ownVertex.clear();
     ownEdges.clear();
-    
+    cellMesh.clear();
 }
 
 void CellPoint::drawCellPoint() {
@@ -49,6 +49,28 @@ void CellPoint::drawNeighbours() {
             ownEdges[i]->cellB->drawCellPoint();
         }
     }
+}
+
+void CellPoint::makeCellMesh() {
+    
+    cellMesh.setMode(OF_PRIMITIVE_TRIANGLES);
+    ofColor temp = ofColor::fromHsb(ofRandom(255), 100, 155);
+   
+    for (int i = 0; i < ownEdges.size(); i++) {
+        cellMesh.addColor(temp);
+        cellMesh.addVertex(point);
+        
+        cellMesh.addColor(temp);
+        cellMesh.addColor(temp);
+
+        cellMesh.addVertex(ownEdges[i]->ptA->point);
+        cellMesh.addVertex(ownEdges[i]->ptB->point);
+
+    }
+}
+
+void CellPoint::drawCellMesh() {
+    cellMesh.draw();
 }
 
 //---------------------------------------------------------------------
