@@ -33,8 +33,8 @@ class ofApp : public ofBaseApp{
     
     
     ofxVoronoi2D voronoi;
-    vector<ofVec2f> pointBag;
     ofRectangle voroRect;
+    vector<ofVec2f> voroStartPoints;
 
     
     vector<CellPoint> cellPoints;
@@ -49,6 +49,6 @@ class ofApp : public ofBaseApp{
     
     bool checkRand(ofVec2f);
     
-    void generateVoro();
+    void generateVoro(vector<ofVec2f>*);
 
 };
