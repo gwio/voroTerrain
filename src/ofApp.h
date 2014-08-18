@@ -52,5 +52,14 @@ class ofApp : public ofBaseApp{
 
     
     void generateVoro(vector<ofVec2f>);
+    
+    
+    vector< vector<ofVec2f> > riverPoints;
+    vector<ofPolyline> rivers;
+    
+    void generateRivers(int);
+    
+    CellPoint *findCoast(CellPoint*);
+    int highestCell;
 
 };

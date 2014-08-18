@@ -20,6 +20,7 @@ CellPoint::CellPoint(ofVec2f point_, int id_) {
     water = false;
     hasHeight = false;
     isCoast = false;
+    riverStart = false;
 }
 
 void CellPoint::drawCellPoint() {

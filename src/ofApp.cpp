@@ -1,28 +1,41 @@
 #include "ofApp.h"
 
-#define CELLS 700
+#define CELLS 1000
 //--------------------------------------------------------------
 void ofApp::setup(){
     voroStartPoints.clear();
     counter = 0;
-      ofDisableAntiAliasing();
+    ofDisableAntiAliasing();
     ofEnableAlphaBlending();
-
+    
     for (int i= 0; i < CELLS; i++) {
         ofVec2f    tPoint = ofVec2f(ofRandom(ofGetWidth()), ofRandom(ofGetHeight()));
         voroStartPoints.push_back(tPoint);
     }
     
     
-    
+    //make a function
     generateVoro(voroStartPoints);
     
     voroStartPoints.clear();
     
     
     //genereate new Voronoi from cell centroids
-
-
+    
+    
+    for (int i = 0; i < cellPoints.size(); i++) {
+        
+        voroStartPoints.push_back(cellPoints[i].centroid);
+    }
+    
+    generateVoro(voroStartPoints);
+    
+    
+    
+    voroStartPoints.clear();
+    
+    
+    //genereate new Voronoi from cell centroids
     for (int i = 0; i < cellPoints.size(); i++) {
         
         voroStartPoints.push_back(cellPoints[i].centroid);
@@ -42,14 +55,15 @@ void ofApp::setup(){
     generateVoro(voroStartPoints);
     
     
-
+    
     
     //sketch for terrain generation
-    
+    //makes water
     for (int i = 0; i < cellPoints.size(); i++) {
         for (int j = 0; j < cellPoints[i].ownVertex.size(); j++) {
             if ( checkCoast( cellPoints[i].ownVertex[j]->point )){
                 cellPoints[i].water = true;
+                cellPoints[i].elevation = -10;
                 cellPoints[i].hasHeight = true;
                 cellPoints[i].setCellColor(ofColor::deepSkyBlue);
                 break;
@@ -58,16 +72,39 @@ void ofApp::setup(){
     }
     
     //add a few random water cells
+    int cellCounter = (int)ofRandom(cellPoints.size());
+    for (int i = 0; i < CELLS/200; i++) {
+            if ( !cellPoints[i].water) {
+                cellPoints[(i+cellCounter)%CELLS].water = true;
+                cellPoints[(i+cellCounter)%CELLS].elevation = -10;
+                cellPoints[(i+cellCounter)%CELLS].hasHeight = true;
+                cellPoints[(i+cellCounter)%CELLS].setCellColor(ofColor::deepSkyBlue);
+            }
+    }
+    cellCounter = (int)ofRandom(cellPoints.size());
+    for (int i = ofRandom(cellPoints.size()); i < CELLS/200; i++) {
+        if ( !cellPoints[i].water) {
+            cellPoints[(i+cellCounter)%CELLS].water = true;
+            cellPoints[(i+cellCounter)%CELLS].elevation = -10;
+            cellPoints[(i+cellCounter)%CELLS].hasHeight = true;
+            cellPoints[(i+cellCounter)%CELLS].setCellColor(ofColor::deepSkyBlue);
+        }
+    }
+    
+    //a few more random water cells, fractal like
+    //add a few random water cells
     for (int i = 0; i < cellPoints.size(); i++) {
-        if ((cellPoints[i].water)  && ((int)ofRandom(4) == 1) ){
+        if ((cellPoints[i].water)  && ((int)ofRandom(3) == 1) ){
             for (int j = 0; j < cellPoints[i].ownEdges.size(); j++) {
                 if (!cellPoints[i].ownEdges[j]->cellA->water) {
                     cellPoints[i].ownEdges[j]->cellA->water = true;
+                    cellPoints[i].ownEdges[j]->cellA->elevation = -10;
                     cellPoints[i].ownEdges[j]->cellA->hasHeight = true;
                     cellPoints[i].ownEdges[j]->cellA->setCellColor(ofColor::deepSkyBlue);
                 }
                 if (!cellPoints[i].ownEdges[j]->cellB->water) {
                     cellPoints[i].ownEdges[j]->cellB->water = true;
+                    cellPoints[i].ownEdges[j]->cellB->elevation = -10;
                     cellPoints[i].ownEdges[j]->cellB->hasHeight = true;
                     cellPoints[i].ownEdges[j]->cellB->setCellColor(ofColor::deepSkyBlue);
                 }
@@ -76,17 +113,18 @@ void ofApp::setup(){
         }
     }
     
-    //and again
     for (int i = 0; i < cellPoints.size(); i++) {
-        if ((cellPoints[i].water)  && ((int)ofRandom(6) == 1) ){
+        if ((cellPoints[i].water)  && ((int)ofRandom(3) == 1) ){
             for (int j = 0; j < cellPoints[i].ownEdges.size(); j++) {
                 if (!cellPoints[i].ownEdges[j]->cellA->water) {
                     cellPoints[i].ownEdges[j]->cellA->water = true;
+                    cellPoints[i].ownEdges[j]->cellA->elevation = -10;
                     cellPoints[i].ownEdges[j]->cellA->hasHeight = true;
                     cellPoints[i].ownEdges[j]->cellA->setCellColor(ofColor::deepSkyBlue);
                 }
                 if (!cellPoints[i].ownEdges[j]->cellB->water) {
                     cellPoints[i].ownEdges[j]->cellB->water = true;
+                    cellPoints[i].ownEdges[j]->cellB->elevation = -10;
                     cellPoints[i].ownEdges[j]->cellB->hasHeight = true;
                     cellPoints[i].ownEdges[j]->cellB->setCellColor(ofColor::deepSkyBlue);
                 }
@@ -94,26 +132,50 @@ void ofApp::setup(){
             
         }
     }
+    
+    
+    //and again
+    for (int i = 0; i < cellPoints.size(); i++) {
+        if ((cellPoints[i].water)  && ((int)ofRandom(5) == 1) ){
+            for (int j = 0; j < cellPoints[i].ownEdges.size(); j++) {
+                if (!cellPoints[i].ownEdges[j]->cellA->water) {
+                    cellPoints[i].ownEdges[j]->cellA->water = true;
+                    cellPoints[i].ownEdges[j]->cellA->elevation = -10;
+                    cellPoints[i].ownEdges[j]->cellA->hasHeight = true;
+                    cellPoints[i].ownEdges[j]->cellA->setCellColor(ofColor::deepSkyBlue);
+                }
+                if (!cellPoints[i].ownEdges[j]->cellB->water) {
+                    cellPoints[i].ownEdges[j]->cellB->water = true;
+                    cellPoints[i].ownEdges[j]->cellB->elevation = -10;
+                    cellPoints[i].ownEdges[j]->cellB->hasHeight = true;
+                    cellPoints[i].ownEdges[j]->cellB->setCellColor(ofColor::deepSkyBlue);
+                }
+            }
+            
+        }
+    }
+    
+  
     
     
     //set highest elevation
     /*
-    float tempDist;
-    tempDist = 1000*1000;
-    int centerCell;
-    ofVec2f centerP = ofVec2f(ofGetWidth()/2 + ofRandom(-100,100), ofGetHeight()/2 + ofRandom(-100,100) );
-    for (int i = 0; i < cellPoints.size(); i++) {
-        float tempLen = (cellPoints[i].point-centerP).lengthSquared();
-        if ( tempLen < tempDist) {
-            tempDist = tempLen;
-            centerCell = i;
-        };
-    }
-    */
+     float tempDist;
+     tempDist = 1000*1000;
+     int centerCell;
+     ofVec2f centerP = ofVec2f(ofGetWidth()/2 + ofRandom(-100,100), ofGetHeight()/2 + ofRandom(-100,100) );
+     for (int i = 0; i < cellPoints.size(); i++) {
+     float tempLen = (cellPoints[i].point-centerP).lengthSquared();
+     if ( tempLen < tempDist) {
+     tempDist = tempLen;
+     centerCell = i;
+     };
+     }
+     */
     
-   // cellPoints[centerCell].elevation = 255;
-   // cellPoints[centerCell].hasHeight = true;
-   // cellPoints[centerCell].setCellColor(ofColor::whiteSmoke);
+    // cellPoints[centerCell].elevation = 255;
+    // cellPoints[centerCell].hasHeight = true;
+    // cellPoints[centerCell].setCellColor(ofColor::whiteSmoke);
     
     
     //set the coast
@@ -136,22 +198,22 @@ void ofApp::setup(){
     
     for (int i = 0; i < cellPoints.size(); i++) {
         float distToCoast = 100000*1000;
-
+        
         if(   (!cellPoints[i].hasHeight) ) {
             
             for (int j = 0; j < cellPoints.size(); j++) {
                 if( ( (cellPoints[j].isCoast) )) {
-
+                    
                     float tempLen = (cellPoints[i].centroid - cellPoints[j].centroid).length();
                     
                     if (tempLen < distToCoast) {
-                    distToCoast = tempLen;
+                        distToCoast = tempLen;
                     }
                 }
                 //cout << distToCoast << endl;
-
+                
             }
-           // cout << distToCoast << endl;
+            // cout << distToCoast << endl;
             float elevationTemp = ofMap(distToCoast, 0, 500, 50, 255);
             cellPoints[i].elevation = elevationTemp;
             cellPoints[i].hasHeight = true;
@@ -159,6 +221,16 @@ void ofApp::setup(){
         }
     }
     
+    //get highest cell
+    float maxEle = 0;
+    for (int i = 0; i < cellPoints.size(); i++) {
+        if (cellPoints[i].elevation > maxEle) {
+            maxEle = cellPoints[i].elevation;
+            highestCell = i;
+        }
+    }
+    
+    generateRivers(15);
 }
 
 
@@ -178,36 +250,44 @@ void ofApp::draw(){
     
     
     
-  
+    
     
     for (int i = 0; i < cellPoints.size(); i++) {
         cellPoints[i].drawCellMesh();
         
         ofSetColor(255,255, 255,40);
         
-         //cellPoints[i].drawCellPoint();
+        //cellPoints[i].drawCellPoint();
         ofSetColor(200, 200, 200,50);
         //cellPoints[i].drawOwnVertex();
-       
+        
     }
     
     
     
     //cellPoints[counter%cellPoints.size()].drawOwnVertex();
     
-   // cellPoints[counter%cellPoints.size()].drawNeighbours();
-    
-
+    // cellPoints[counter%cellPoints.size()].drawNeighbours();
     
     
-   
+    
+    ofPushStyle();
+    ofSetColor(ofColor::fromHsb(132, 200, 200,50));
+    
+    ofSetLineWidth(4);
     
     
-   
-
+    for (int i = 0; i < rivers.size(); i++) {
+        rivers[i].draw();
+    }
+    ofPopStyle();
+    
+    
+    
+    
     //voroMesh.drawWireframe();
     ofSetColor(255);
-   // ofDrawBitmapString( "vertices "+ ofToString(cellPoints[counter%cellPoints.size()].ownVertex.size())+ "  id:"+ofToString(cellPoints[counter%cellPoints.size()].iD), 40, 40);
+    // ofDrawBitmapString( "vertices "+ ofToString(cellPoints[counter%cellPoints.size()].ownVertex.size())+ "  id:"+ofToString(cellPoints[counter%cellPoints.size()].iD), 40, 40);
 }
 
 //--------------------------------------------------------------
@@ -306,7 +386,7 @@ void ofApp::generateVoro( vector<ofVec2f> startPoints_) {
         
         cellPoints.push_back( CellPoint(startPoints_.at(i),i) );
         
-      //  pointBag.push_back();
+        //  pointBag.push_back();
         
         
     }
@@ -502,5 +582,74 @@ void ofApp::generateVoro( vector<ofVec2f> startPoints_) {
     for (int i = 0; i < cellPoints.size(); i++) {
         cellPoints[i].makeCellMesh();
     }
+    
+}
+
+CellPoint *ofApp::findCoast(CellPoint *point_) {
+    
+    float curEle = point_->elevation;
+    CellPoint *curCell = point_;
+    for (int i = 0; i < point_->ownEdges.size(); i++) {
+        if (point_->ownEdges[i]->cellA != point_) {
+            if (point_->ownEdges[i]->cellA->elevation < curEle) {
+                curEle = point_->ownEdges[i]->cellA->elevation;
+                curCell = point_->ownEdges[i]->cellA;
+            }
+        }
+        
+        if (point_->ownEdges[i]->cellB != point_) {
+            if (point_->ownEdges[i]->cellB->elevation < curEle) {
+                curEle = point_->ownEdges[i]->cellB->elevation;
+                curCell = point_->ownEdges[i]->cellB;
+            }
+        }
+        
+    }
+    return curCell;
+    
+}
+
+void ofApp::generateRivers(int num_) {
+    //generate river
+    
+    int thatcell = highestCell;
+    cellPoints[highestCell].riverStart =true;
+    rivers.clear();
+    riverPoints.clear();
+    riverPoints.resize(num_);
+    for (int k = 0; k < num_; k++) {
+        
+        
+        riverPoints[k].push_back(cellPoints[thatcell].point);
+        
+        CellPoint *next = findCoast(&cellPoints[thatcell]);
+        for (int i = 0; i < 40; i++) {
+            
+            riverPoints[k].push_back(next->point);
+            
+            if (next->water) {
+                riverPoints[k].push_back(next->point);
+                break;
+            }
+            next = findCoast(next);
+            
+        }
+        
+        ofPolyline temp;
+        rivers.push_back(temp);
+        for (int i = 0; i < riverPoints[k].size(); i++) {
+            rivers.at(k).addVertex(riverPoints[k][i]);
+        }
+        
+        
+        for(int a = 0; a < cellPoints.size(); a++) {
+            if ( (!cellPoints[a].water) && (!cellPoints[a].riverStart) && (cellPoints[a].elevation > (cellPoints[highestCell].elevation*0.7)) ){
+                thatcell = a;
+                cellPoints[a].riverStart = true;
+                break;
+            }
+        }
+    }
+    
     
 }
