@@ -66,7 +66,11 @@ public:
     int highestCell;
 
     
+    //for use in forest game
     
+    vector<ofPolyline> coastLines;
+    
+    void findCoastLines(vector<CellPoint>*);
 };
 
 #endif /* defined(__voronoi_test__terrainGen__) */

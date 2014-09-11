@@ -50,6 +50,7 @@ public:
     VertexPoint(ofVec2f);
     ofVec2f point;
     vector<CellPoint*> ownCells;
+    vector<VoroEdge*> ownEdges;
     
     void drawVertex();
     void drawOwnCells();
@@ -66,6 +67,7 @@ public:
     CellPoint *cellA, *cellB;
     
     void drawEdge();
+    bool isCoast;
 };
 
 #endif /* defined(__voronoi_test__voronoiData__) */

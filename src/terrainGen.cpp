@@ -28,7 +28,9 @@ void TerrainGen::start(vector<ofVec2f> voroStartPoints_, int waterCells_, int co
     
     //add int random watercells, int add radnom watercell to coast, int number of rivers
     generateTerrain(waterCells_,coastPass_,rivers_);
-
+    
+    
+    
 }
 
 void TerrainGen::generateVoro( vector<ofVec2f> startPoints_) {
@@ -230,15 +232,18 @@ void TerrainGen::generateVoro( vector<ofVec2f> startPoints_) {
         }
     }
     
-    //add voroEdges to Cells
+    //add voroEdges to Cells and add edges to vertexPoints
     
     for (int i = 0; i < edges.size(); i++) {
         edges[i].cellA->ownEdges.push_back(&edges[i]);
         edges[i].cellB->ownEdges.push_back(&edges[i]);
         
-        
+        edges[i].ptA->ownEdges.push_back(&edges[i]);
+        edges[i].ptB->ownEdges.push_back(&edges[i]);
+
     }
     
+    //generate cellMeshes
     for (int i = 0; i < cellPoints.size(); i++) {
         cellPoints[i].makeCellMesh();
     }
@@ -337,7 +342,7 @@ void TerrainGen::generateTerrain(int waterCells, int coastPass, int rivers_) {
     //run rivers
     generateRivers(rivers_);
     
-    
+    findCoastLines(&cellPoints);
 }
 
 void TerrainGen::terrainSetWater(int loneWaterCells, int coastPass) {
@@ -411,6 +416,20 @@ void TerrainGen::terrainSetWater(int loneWaterCells, int coastPass) {
         }
     }
     
+    //set edge to isCoast
+    
+    for (int i = 0; i < cellPoints.size(); i++) {
+        if (!cellPoints[i].water) {
+            for (int j = 0; j < cellPoints[i].ownEdges.size(); j++) {
+                if (  (!cellPoints[i].ownEdges[j]->isCoast) && ((cellPoints[i].ownEdges[j]->cellA->water) || (cellPoints[i].ownEdges[j]->cellB->water)) ){
+                    cellPoints[i].ownEdges[j]->isCoast = true;
+                }
+                
+            }
+        }
+    }
+    
+    
     
 }
 
@@ -469,4 +488,10 @@ bool TerrainGen::checkCoast(ofVec2f p_) {
             (p_.y < ofRandom(50,200)) ||
             (p_.y > ofGetHeight()-ofRandom(50,200))
             );
+}
+
+
+void TerrainGen::findCoastLines(vector<CellPoint>* cellPoints_) {
+    
+    
 }

@@ -78,7 +78,8 @@ void CellPoint::makeCellMesh() {
 void CellPoint::drawCellMesh() {
     
     if (cellMesh.getNumVertices() != 0) {
-    cellMesh.draw();
+   // cellMesh.draw();
+        cellMesh.drawWireframe();
     }
 }
 
@@ -100,6 +101,7 @@ void CellPoint::setCellColor(ofColor col_) {
 VertexPoint::VertexPoint(ofVec2f point_) {
     point = point_;
     ownCells.clear();
+    ownEdges.clear();
 }
 
 void VertexPoint::drawVertex() {
@@ -127,6 +129,8 @@ VoroEdge::VoroEdge(VertexPoint* v1, VertexPoint* v2, CellPoint* c1, CellPoint*c2
     
     cellA = c1;
     cellB = c2;
+    
+    isCoast = false;
 }
 
 void VoroEdge::drawEdge() {

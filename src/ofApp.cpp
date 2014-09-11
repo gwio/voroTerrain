@@ -1,5 +1,6 @@
 #include "ofApp.h"
-#define CELLS 1500
+//1500 seems ok
+#define CELLS 500
 
 
 //--------------------------------------------------------------
@@ -32,7 +33,7 @@ void ofApp::update(){
 void ofApp::draw(){
     
     ofBackground(ofColor::fromHsb(150, 55, 60));
-    ofBackground(ofColor::deepSkyBlue);
+  //  ofBackground(ofColor::deepSkyBlue);
     
     //tempMesh.draw();
     
@@ -41,7 +42,7 @@ void ofApp::draw(){
     
     
     for (int i = 0; i < terrainGenerator.cellPoints.size(); i++) {
-       terrainGenerator. cellPoints[i].drawCellMesh();
+       terrainGenerator.cellPoints[i].drawCellMesh();
         
         ofSetColor(255,255, 255,40);
         
@@ -71,8 +72,10 @@ void ofApp::draw(){
     ofPopStyle();
     
     
-    
-    
+    for (int i = 0; i < terrainGenerator.coastLines.size(); i++) {
+        ofSetColor(ofColor::orangeRed );
+        terrainGenerator.coastLines[i].draw();
+    }
     //voroMesh.drawWireframe();
     ofSetColor(255);
     // ofDrawBitmapString( "vertices "+ ofToString(cellPoints[counter%cellPoints.size()].ownVertex.size())+ "  id:"+ofToString(cellPoints[counter%cellPoints.size()].iD), 40, 40);
