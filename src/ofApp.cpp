@@ -1,6 +1,6 @@
 #include "ofApp.h"
 //1500 seems ok
-#define CELLS 500
+#define CELLS 100
 
 
 //--------------------------------------------------------------
@@ -16,6 +16,9 @@ void ofApp::setup(){
     
     
     terrainGenerator.start(voroStartPoints,2,3,30);
+    
+  //  terrainGenerator.start(voroStartPoints,0,0,30);
+
     
    
     
@@ -42,13 +45,13 @@ void ofApp::draw(){
     
     
     for (int i = 0; i < terrainGenerator.cellPoints.size(); i++) {
-       terrainGenerator.cellPoints[i].drawCellMesh();
+       //terrainGenerator.cellPoints[i].drawCellMesh();
         
         ofSetColor(255,255, 255,40);
         
-        //cellPoints[i].drawCellPoint();
+        //terrainGenerator.cellPoints[i].drawCellPoint();
         ofSetColor(200, 200, 200,50);
-        //cellPoints[i].drawOwnVertex();
+        terrainGenerator.cellPoints[i].drawOwnVertex();
         
     }
     
@@ -72,9 +75,28 @@ void ofApp::draw(){
     ofPopStyle();
     
     
+   
+    
+    for (int i = 0; i < terrainGenerator.edges.size(); i++) {
+        if (terrainGenerator.edges.at(i).isCoast) {
+            ofSetColor(ofColor::mediumSpringGreen );
+
+        terrainGenerator.edges.at(i).drawEdge();
+        }
+    }
+    
     for (int i = 0; i < terrainGenerator.coastLines.size(); i++) {
         ofSetColor(ofColor::orangeRed );
         terrainGenerator.coastLines[i].draw();
+    }
+    
+    for (int i = 0; i < terrainGenerator.vertexPoints.size(); i++) {
+        if (terrainGenerator.vertexPoints.at(i).coastEdges == 2) {
+            ofSetColor(ofColor::blue);
+        } else if (terrainGenerator.vertexPoints.at(i).coastEdges < 2)  {
+            ofSetColor(ofColor::red);
+        }
+        ofEllipse(terrainGenerator.vertexPoints.at(i).point, 6, 6);
     }
     //voroMesh.drawWireframe();
     ofSetColor(255);

@@ -65,11 +65,11 @@ void TerrainGen::generateVoro( vector<ofVec2f> startPoints_) {
         
         ofxSegment s = *it;
         
-        string PAx = ofToString(s.p1.x,2);
-        string PAy = ofToString(s.p1.y,2);
+        string PAx = ofToString(s.p1.x,1);
+        string PAy = ofToString(s.p1.y,1);
         
-        string PBx = ofToString(s.p2.x,2);
-        string PBy = ofToString(s.p2.y,2);
+        string PBx = ofToString(s.p2.x,1);
+        string PBy = ofToString(s.p2.y,1);
         
         ofVec2f pointA = ofVec2f( ofToFloat(PAx), ofToFloat(PAy));
         ofVec2f pointB = ofVec2f( ofToFloat(PBx), ofToFloat(PBy));
@@ -128,11 +128,11 @@ void TerrainGen::generateVoro( vector<ofVec2f> startPoints_) {
         ofVec2f ptA,ptB;
         
         
-        string PAx = ofToString(s.p1.x,2);
-        string PAy = ofToString(s.p1.y,2);
+        string PAx = ofToString(s.p1.x,1);
+        string PAy = ofToString(s.p1.y,1);
         
-        string PBx = ofToString(s.p2.x,2);
-        string PBy = ofToString(s.p2.y,2);
+        string PBx = ofToString(s.p2.x,1);
+        string PBy = ofToString(s.p2.y,1);
         
         ptA = ofVec2f( ofToFloat(PAx), ofToFloat(PAy));
         ptB = ofVec2f( ofToFloat(PBx), ofToFloat(PBy));
@@ -336,22 +336,40 @@ void TerrainGen::generateTerrain(int waterCells, int coastPass, int rivers_) {
     //makes water and coast cells
     terrainSetWater(waterCells,coastPass);
     
+    //test for vertexPoint with more then 2 coastEdges
+    for (int i = 0; i < vertexPoints.size(); i++) {
+        bool coastTest = false;
+        if (vertexPoints[i].coastEdges > 2) {
+            cout << "coastLines" << endl;
+            coastTest = true;
+            for (int j = 0; j < vertexPoints[i].ownCells.size(); j++) {
+                vertexPoints[i].ownCells.at(j)->water = true;
+            }
+        }
+        //rerun coastLineGeneration
+        if (coastTest) {
+            terrainSetWater(0, 0);
+        }
+    }
+    
     //set elevation an highest cell
-    terrainSetElevation();
+   // terrainSetElevation();
     
     //run rivers
-    generateRivers(rivers_);
+  //  generateRivers(rivers_);
     
     findCoastLines(&cellPoints);
 }
 
 void TerrainGen::terrainSetWater(int loneWaterCells, int coastPass) {
     
+    
+    
     //sketch for terrain generation
     //makes water
     for (int i = 0; i < cellPoints.size(); i++) {
         for (int j = 0; j < cellPoints[i].ownVertex.size(); j++) {
-            if ( checkCoast( cellPoints[i].ownVertex[j]->point )){
+            if ( checkCoast( cellPoints[i].ownVertex.at(j)->point )){
                 cellPoints[i].water = true;
                 cellPoints[i].elevation = -10;
                 cellPoints[i].hasHeight = true;
@@ -408,7 +426,7 @@ void TerrainGen::terrainSetWater(int loneWaterCells, int coastPass) {
                 if ( ((cellPoints[i].ownEdges[j]->cellA->water) || (cellPoints[i].ownEdges[j]->cellB->water)) ){
                     cellPoints[i].elevation = 0;
                     cellPoints[i].hasHeight = true;
-                    cellPoints[i].setCellColor(ofColor(40));
+                    cellPoints[i].setCellColor(ofColor::floralWhite);
                     cellPoints[i].isCoast = true;
                     break;
                 }
@@ -417,17 +435,28 @@ void TerrainGen::terrainSetWater(int loneWaterCells, int coastPass) {
     }
     
     //set edge to isCoast
+    // set coastEdges for vertexPoints to 0
     
+    for (int i = 0; i < vertexPoints.size(); i++) {
+        vertexPoints[i].coastEdges = 0;
+    }
+    
+    //count coastEdges for each vertex
     for (int i = 0; i < cellPoints.size(); i++) {
-        if (!cellPoints[i].water) {
+        if (cellPoints[i].isCoast) {
             for (int j = 0; j < cellPoints[i].ownEdges.size(); j++) {
-                if (  (!cellPoints[i].ownEdges[j]->isCoast) && ((cellPoints[i].ownEdges[j]->cellA->water) || (cellPoints[i].ownEdges[j]->cellB->water)) ){
+                if (  ((cellPoints[i].ownEdges[j]->cellA->water) || (cellPoints[i].ownEdges[j]->cellB->water)) ){
                     cellPoints[i].ownEdges[j]->isCoast = true;
+                    cellPoints[i].ownEdges[j]->ptA->coastEdges++;
+                    cellPoints[i].ownEdges[j]->ptB->coastEdges++;
+
                 }
                 
             }
         }
     }
+    
+    
     
     
     
@@ -449,10 +478,8 @@ void TerrainGen::terrainSetElevation() {
                         distToCoast = tempLen;
                     }
                 }
-                //cout << distToCoast << endl;
                 
             }
-            // cout << distToCoast << endl;
             float elevationTemp = ofMap(distToCoast, 0, 500, 50, 255);
             cellPoints[i].elevation = elevationTemp;
             cellPoints[i].hasHeight = true;
@@ -483,15 +510,77 @@ bool TerrainGen::checkRand(ofVec2f p_) {
 
 bool TerrainGen::checkCoast(ofVec2f p_) {
     return (
-            (p_.x < ofRandom(50,200)) ||
-            (p_.x > ofGetWidth()-ofRandom(50,200)) ||
-            (p_.y < ofRandom(50,200)) ||
-            (p_.y > ofGetHeight()-ofRandom(50,200))
+            (p_.x < ofRandom(50,20)) ||
+            (p_.x > ofGetWidth()-ofRandom(50,20)) ||
+            (p_.y < ofRandom(50,20)) ||
+            (p_.y > ofGetHeight()-ofRandom(50,20))
             );
 }
 
 
 void TerrainGen::findCoastLines(vector<CellPoint>* cellPoints_) {
+    
+    int debugCounter = 0;
+    
+    ofPolyline tempPLine;
+    tempPLine.clear();
+    
+    VoroEdge *currentEdge;
+    VertexPoint *currentPoint;
+    VertexPoint *endPoint;
+    
+    for (int i = 0; i < edges.size(); i++) {
+        if (edges[i].isCoast) {
+            currentEdge = &edges[i];
+            currentPoint = edges[i].ptA;
+            endPoint = edges[i].ptB;
+            tempPLine.addVertex(edges[i].ptA->point);
+            break;
+        }
+    }
+    
+    // problem wenn sich zwei inseln an der spitze berühren dann gibts auf einem vertexpoint 4 coastlines
+    
+    
+    while ((currentPoint != endPoint) && (debugCounter < 100000)){
+        debugCounter++;
+      //  cout << debugCounter << endl;
+        
+        for (int j = 0; j < currentPoint->ownEdges.size(); j++) {
+            
+            if ( (currentPoint->ownEdges.at(j)->isCoast) && (currentEdge != currentPoint->ownEdges.at(j)) ) {
+                
+                if (currentPoint->ownEdges.at(j)->ptA != currentPoint ) {
+                    tempPLine.addVertex(currentPoint->ownEdges.at(j)->ptA->point);
+                    currentEdge = currentPoint->ownEdges.at(j);
+                    currentPoint = currentPoint->ownEdges.at(j)->ptA;
+                    cout << currentPoint->coastEdges << endl;
+                    
+                    break;
+                }
+                
+                
+                if (currentPoint->ownEdges.at(j)->ptB != currentPoint ) {
+                    tempPLine.addVertex(currentPoint->ownEdges.at(j)->ptB->point);
+                    currentEdge = currentPoint->ownEdges.at(j);
+                    currentPoint = currentPoint->ownEdges.at(j)->ptB;
+                    cout << currentPoint->coastEdges << endl;
+
+                    break;
+                }
+            }
+            
+            
+        }
+        
+    }
+   
+    coastLines.push_back(tempPLine);
+    
+    
+    
+    
+    
     
     
 }

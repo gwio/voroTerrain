@@ -79,7 +79,7 @@ void CellPoint::drawCellMesh() {
     
     if (cellMesh.getNumVertices() != 0) {
    // cellMesh.draw();
-        cellMesh.drawWireframe();
+    cellMesh.drawWireframe();
     }
 }
 
@@ -102,6 +102,7 @@ VertexPoint::VertexPoint(ofVec2f point_) {
     point = point_;
     ownCells.clear();
     ownEdges.clear();
+    coastEdges = 0;
 }
 
 void VertexPoint::drawVertex() {
@@ -120,8 +121,11 @@ void VertexPoint::drawOwnCells() {
 
 
 VoroEdge::VoroEdge(){
-    
+    isCoast = false;
+
 }
+
+
 VoroEdge::VoroEdge(VertexPoint* v1, VertexPoint* v2, CellPoint* c1, CellPoint*c2) {
     
     ptA = v1;

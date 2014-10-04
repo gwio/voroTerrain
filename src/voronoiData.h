@@ -52,6 +52,9 @@ public:
     vector<CellPoint*> ownCells;
     vector<VoroEdge*> ownEdges;
     
+    //temp
+    int coastEdges;
+    
     void drawVertex();
     void drawOwnCells();
 };
