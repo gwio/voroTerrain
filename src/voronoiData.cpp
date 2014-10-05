@@ -129,7 +129,7 @@ void VertexPoint::drawOwnCells() {
 
 VoroEdge::VoroEdge(){
     isCoast = false;
-    
+    coastHasPath = false;
 }
 
 

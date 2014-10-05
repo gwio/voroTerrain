@@ -72,6 +72,8 @@ public:
     
     void drawEdge();
     bool isCoast;
+    //to find all coastlines
+    bool coastHasPath;
 };
 
 #endif /* defined(__voronoi_test__voronoiData__) */

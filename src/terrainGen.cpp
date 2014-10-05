@@ -486,10 +486,10 @@ void TerrainGen::terrainSetElevation() {
                 }
                 
             }
-            float elevationTemp = ofMap(distToCoast, 0, 500, 50, 255);
+            float elevationTemp = ofMap(distToCoast, 0, 400, 50, 255);
             cellPoints[i].elevation = elevationTemp;
             cellPoints[i].hasHeight = true;
-            cellPoints[i].setCellColor(ofColor::fromHsb( 40, 60,elevationTemp*1.4));
+            cellPoints[i].setCellColor(ofColor::fromHsb( 40, 205-elevationTemp,elevationTemp*1.4));
         }
     }
     
@@ -516,10 +516,10 @@ bool TerrainGen::checkRand(ofVec2f p_) {
 
 bool TerrainGen::checkCoast(ofVec2f p_) {
     return (
-            (p_.x < ofRandom(50,200)) ||
-            (p_.x > ofGetWidth()-ofRandom(50,200)) ||
-            (p_.y < ofRandom(50,200)) ||
-            (p_.y > ofGetHeight()-ofRandom(50,200))
+            (p_.x < ofRandom(20,150)) ||
+            (p_.x > ofGetWidth()-ofRandom(20,150)) ||
+            (p_.y < ofRandom(20,150)) ||
+            (p_.y > ofGetHeight()-ofRandom(20,150))
             );
 }
 
@@ -529,59 +529,67 @@ void TerrainGen::findCoastLines(vector<CellPoint>* cellPoints_) {
     int debugCounter = 0;
     
     ofPolyline tempPLine;
-    tempPLine.clear();
     
     VoroEdge *currentEdge;
     VertexPoint *currentPoint;
     VertexPoint *endPoint;
     
     for (int i = 0; i < edges.size(); i++) {
-        if (edges[i].isCoast) {
+        while (edges[i].isCoast && !edges[i].coastHasPath) {
+            tempPLine.clear();
+
             currentEdge = &edges[i];
             currentPoint = edges[i].ptA;
             endPoint = edges[i].ptB;
             tempPLine.addVertex(edges[i].ptA->point);
-            break;
-        }
-    }
-    
-    // problem wenn sich zwei inseln an der spitze berühren dann gibts auf einem vertexpoint 4 coastlines
-    
-    
-    while ((currentPoint != endPoint) && (debugCounter < 100000)){
-        debugCounter++;
-        //  cout << debugCounter << endl;
-        
-        for (int j = 0; j < currentPoint->ownEdges.size(); j++) {
+            edges[i].coastHasPath = true;
+            //break;
             
-            if ( (currentPoint->ownEdges.at(j)->isCoast) && (currentEdge != currentPoint->ownEdges.at(j)) ) {
+            
+            while ((currentPoint != endPoint) && (debugCounter < 100000)){
+                debugCounter++;
+                //  cout << debugCounter << endl;
                 
-                if (currentPoint->ownEdges.at(j)->ptA != currentPoint ) {
-                    tempPLine.addVertex(currentPoint->ownEdges.at(j)->ptA->point);
-                    currentEdge = currentPoint->ownEdges.at(j);
-                    currentPoint = currentPoint->ownEdges.at(j)->ptA;
-                    cout << currentPoint->coastEdges << endl;
+                for (int j = 0; j < currentPoint->ownEdges.size(); j++) {
                     
-                    break;
+                    if ( (currentPoint->ownEdges.at(j)->isCoast) && (currentEdge != currentPoint->ownEdges.at(j)) ) {
+                        
+                        if (currentPoint->ownEdges.at(j)->ptA != currentPoint ) {
+                            tempPLine.addVertex(currentPoint->ownEdges.at(j)->ptA->point);
+                            currentEdge = currentPoint->ownEdges.at(j);
+                            currentPoint = currentPoint->ownEdges.at(j)->ptA;
+                            currentEdge->coastHasPath = true;
+                            cout << currentPoint->coastEdges << endl;
+                            
+                            break;
+                        }
+                        
+                        
+                        if (currentPoint->ownEdges.at(j)->ptB != currentPoint ) {
+                            tempPLine.addVertex(currentPoint->ownEdges.at(j)->ptB->point);
+                            currentEdge = currentPoint->ownEdges.at(j);
+                            currentPoint = currentPoint->ownEdges.at(j)->ptB;
+                            currentEdge->coastHasPath = true;
+                            cout << currentPoint->coastEdges << endl;
+                            
+                            break;
+                        }
+                    }
+                    
+                    
                 }
                 
-                
-                if (currentPoint->ownEdges.at(j)->ptB != currentPoint ) {
-                    tempPLine.addVertex(currentPoint->ownEdges.at(j)->ptB->point);
-                    currentEdge = currentPoint->ownEdges.at(j);
-                    currentPoint = currentPoint->ownEdges.at(j)->ptB;
-                    cout << currentPoint->coastEdges << endl;
-                    
-                    break;
-                }
             }
-            
-            
+            //tempPLine.addVertex(endPoint);
+            tempPLine.close();
+            coastLines.push_back(tempPLine);
+
         }
-        
     }
     
-    coastLines.push_back(tempPLine);
+    
+    
+    
     
     
     

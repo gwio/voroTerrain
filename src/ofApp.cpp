@@ -1,11 +1,11 @@
 #include "ofApp.h"
 //1500 seems ok
-#define CELLS 1500
+#define CELLS 20100
 
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-    ofDisableAntiAliasing();
+    //ofDisableAntiAliasing();
     ofEnableAlphaBlending();
     
     voroStartPoints.clear();
