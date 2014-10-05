@@ -57,7 +57,7 @@ void TerrainGen::generateVoro( vector<ofVec2f> startPoints_) {
     
     
     voroRect = ofRectangle(0, 0, ofGetWidth(), ofGetHeight());
-    voronoi.compute(startPoints_, voroRect);
+    voronoi.compute(startPoints_, voroRect, 1.0);
     
     
     //add all cell vertices to vertexPoints, check for dublicates
@@ -65,11 +65,11 @@ void TerrainGen::generateVoro( vector<ofVec2f> startPoints_) {
         
         ofxSegment s = *it;
         
-        string PAx = ofToString(s.p1.x,1);
-        string PAy = ofToString(s.p1.y,1);
+        string PAx = ofToString(s.p1.x,2);
+        string PAy = ofToString(s.p1.y,2);
         
-        string PBx = ofToString(s.p2.x,1);
-        string PBy = ofToString(s.p2.y,1);
+        string PBx = ofToString(s.p2.x,2);
+        string PBy = ofToString(s.p2.y,2);
         
         ofVec2f pointA = ofVec2f( ofToFloat(PAx), ofToFloat(PAy));
         ofVec2f pointB = ofVec2f( ofToFloat(PBx), ofToFloat(PBy));
@@ -83,7 +83,7 @@ void TerrainGen::generateVoro( vector<ofVec2f> startPoints_) {
             
             testA = false;
             for (int  i = 0; i < vertexPoints.size(); i++) {
-                if ( vertexPoints[i].point ==  pointA ){
+                if (( vertexPoints[i].point ==  pointA) || (vertexPoints[i].point-pointA).length() < 0.02) {
                     testA = true;
                     break;
                 }
@@ -95,7 +95,7 @@ void TerrainGen::generateVoro( vector<ofVec2f> startPoints_) {
             
             testB = false;
             for (int  i = 0; i < vertexPoints.size(); i++) {
-                if ( vertexPoints[i].point ==  pointB ){
+                if (( vertexPoints[i].point ==  pointB) || (vertexPoints[i].point-pointB).length() < 0.02) {
                     testB = true;
                     break;
                 }
@@ -128,11 +128,11 @@ void TerrainGen::generateVoro( vector<ofVec2f> startPoints_) {
         ofVec2f ptA,ptB;
         
         
-        string PAx = ofToString(s.p1.x,1);
-        string PAy = ofToString(s.p1.y,1);
+        string PAx = ofToString(s.p1.x,2);
+        string PAy = ofToString(s.p1.y,2);
         
-        string PBx = ofToString(s.p2.x,1);
-        string PBy = ofToString(s.p2.y,1);
+        string PBx = ofToString(s.p2.x,2);
+        string PBy = ofToString(s.p2.y,2);
         
         ptA = ofVec2f( ofToFloat(PAx), ofToFloat(PAy));
         ptB = ofVec2f( ofToFloat(PBx), ofToFloat(PBy));
@@ -161,10 +161,12 @@ void TerrainGen::generateVoro( vector<ofVec2f> startPoints_) {
             tempEdge.cellA = &cellPoints[cellCompare[0].iD];
             tempEdge.cellB = &cellPoints[cellCompare[1].iD];
             
-            
+            bool testA = false;
+            bool testB = false;
             
             for (int k = 0; k < vertexPoints.size(); k++) {
-                if (vertexPoints[k].point ==  ptA) {
+                if ( (vertexPoints[k].point ==  ptA) ||  (vertexPoints[k].point-ptA).length() < 0.02 ) {
+                    testA= true;
                     //add vertexA zo Edge
                     tempEdge.ptA = &vertexPoints[k];
                     bool test = false;
@@ -191,7 +193,8 @@ void TerrainGen::generateVoro( vector<ofVec2f> startPoints_) {
             }
             
             for (int k = 0; k < vertexPoints.size(); k++) {
-                if (vertexPoints[k].point ==  ptB) {
+                if ( (vertexPoints[k].point ==  ptB) ||  (vertexPoints[k].point-ptB).length() < 0.02 ) {
+                    testB=true;
                     //add vertexB to edge
                     tempEdge.ptB = &vertexPoints[k];
                     bool test = false;
@@ -216,8 +219,9 @@ void TerrainGen::generateVoro( vector<ofVec2f> startPoints_) {
                     }
                 }
             }
-            
-            edges.push_back(tempEdge);
+            if (testA&&testB) {
+                edges.push_back(tempEdge);
+            }
             
         }
         
@@ -240,7 +244,7 @@ void TerrainGen::generateVoro( vector<ofVec2f> startPoints_) {
         
         edges[i].ptA->ownEdges.push_back(&edges[i]);
         edges[i].ptB->ownEdges.push_back(&edges[i]);
-
+        
     }
     
     //generate cellMeshes
@@ -337,8 +341,9 @@ void TerrainGen::generateTerrain(int waterCells, int coastPass, int rivers_) {
     terrainSetWater(waterCells,coastPass);
     
     //test for vertexPoint with more then 2 coastEdges
+    bool coastTest = false;
+    
     for (int i = 0; i < vertexPoints.size(); i++) {
-        bool coastTest = false;
         if (vertexPoints[i].coastEdges > 2) {
             cout << "coastLines" << endl;
             coastTest = true;
@@ -346,17 +351,18 @@ void TerrainGen::generateTerrain(int waterCells, int coastPass, int rivers_) {
                 vertexPoints[i].ownCells.at(j)->water = true;
             }
         }
-        //rerun coastLineGeneration
-        if (coastTest) {
-            terrainSetWater(0, 0);
-        }
+        
+    }
+    //rerun coastLineGeneration
+    if (coastTest) {
+        terrainSetWater(0, 0);
     }
     
     //set elevation an highest cell
-   // terrainSetElevation();
+    terrainSetElevation();
     
     //run rivers
-  //  generateRivers(rivers_);
+    generateRivers(rivers_);
     
     findCoastLines(&cellPoints);
 }
@@ -426,7 +432,7 @@ void TerrainGen::terrainSetWater(int loneWaterCells, int coastPass) {
                 if ( ((cellPoints[i].ownEdges[j]->cellA->water) || (cellPoints[i].ownEdges[j]->cellB->water)) ){
                     cellPoints[i].elevation = 0;
                     cellPoints[i].hasHeight = true;
-                    cellPoints[i].setCellColor(ofColor::floralWhite);
+                    cellPoints[i].setCellColor(ofColor::burlyWood);
                     cellPoints[i].isCoast = true;
                     break;
                 }
@@ -449,7 +455,7 @@ void TerrainGen::terrainSetWater(int loneWaterCells, int coastPass) {
                     cellPoints[i].ownEdges[j]->isCoast = true;
                     cellPoints[i].ownEdges[j]->ptA->coastEdges++;
                     cellPoints[i].ownEdges[j]->ptB->coastEdges++;
-
+                    
                 }
                 
             }
@@ -483,7 +489,7 @@ void TerrainGen::terrainSetElevation() {
             float elevationTemp = ofMap(distToCoast, 0, 500, 50, 255);
             cellPoints[i].elevation = elevationTemp;
             cellPoints[i].hasHeight = true;
-            cellPoints[i].setCellColor(ofColor::fromHsb( 40, 60,elevationTemp));
+            cellPoints[i].setCellColor(ofColor::fromHsb( 40, 60,elevationTemp*1.4));
         }
     }
     
@@ -510,10 +516,10 @@ bool TerrainGen::checkRand(ofVec2f p_) {
 
 bool TerrainGen::checkCoast(ofVec2f p_) {
     return (
-            (p_.x < ofRandom(50,20)) ||
-            (p_.x > ofGetWidth()-ofRandom(50,20)) ||
-            (p_.y < ofRandom(50,20)) ||
-            (p_.y > ofGetHeight()-ofRandom(50,20))
+            (p_.x < ofRandom(50,200)) ||
+            (p_.x > ofGetWidth()-ofRandom(50,200)) ||
+            (p_.y < ofRandom(50,200)) ||
+            (p_.y > ofGetHeight()-ofRandom(50,200))
             );
 }
 
@@ -544,7 +550,7 @@ void TerrainGen::findCoastLines(vector<CellPoint>* cellPoints_) {
     
     while ((currentPoint != endPoint) && (debugCounter < 100000)){
         debugCounter++;
-      //  cout << debugCounter << endl;
+        //  cout << debugCounter << endl;
         
         for (int j = 0; j < currentPoint->ownEdges.size(); j++) {
             
@@ -565,7 +571,7 @@ void TerrainGen::findCoastLines(vector<CellPoint>* cellPoints_) {
                     currentEdge = currentPoint->ownEdges.at(j);
                     currentPoint = currentPoint->ownEdges.at(j)->ptB;
                     cout << currentPoint->coastEdges << endl;
-
+                    
                     break;
                 }
             }
@@ -574,7 +580,7 @@ void TerrainGen::findCoastLines(vector<CellPoint>* cellPoints_) {
         }
         
     }
-   
+    
     coastLines.push_back(tempPLine);
     
     

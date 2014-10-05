@@ -32,6 +32,7 @@ public:
     
     void makeCellMesh();
     void drawCellMesh();
+    void drawWire();
     void setCellColor(ofColor);
     
     //terrainstuff

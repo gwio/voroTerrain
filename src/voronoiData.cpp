@@ -31,7 +31,7 @@ void CellPoint::drawCellPoint() {
 void CellPoint::drawOwnVertex() {
     
     for (int i = 0; i < ownVertex.size(); i++) {
-
+        
         ofLine(ownVertex[i]->point, point);
     }
 }
@@ -59,17 +59,17 @@ void CellPoint::makeCellMesh() {
     
     cellMesh.setMode(OF_PRIMITIVE_TRIANGLES);
     ofColor temp = ofColor::fromHsb(ofRandom(255), 100, 155);
-   
+    
     for (int i = 0; i < ownEdges.size(); i++) {
         cellMesh.addColor(temp);
         cellMesh.addVertex(point);
         
         cellMesh.addColor(temp);
         cellMesh.addColor(temp);
-
+        
         cellMesh.addVertex(ownEdges[i]->ptA->point);
         cellMesh.addVertex(ownEdges[i]->ptB->point);
-
+        
     }
     
     centroid = cellMesh.getCentroid();
@@ -78,8 +78,15 @@ void CellPoint::makeCellMesh() {
 void CellPoint::drawCellMesh() {
     
     if (cellMesh.getNumVertices() != 0) {
-   // cellMesh.draw();
-    cellMesh.drawWireframe();
+        cellMesh.draw();
+        //cellMesh.drawWireframe();
+    }
+}
+
+void CellPoint::drawWire() {
+    
+    if (cellMesh.getNumVertices() != 0) {
+        cellMesh.drawWireframe();
     }
 }
 
@@ -122,7 +129,7 @@ void VertexPoint::drawOwnCells() {
 
 VoroEdge::VoroEdge(){
     isCoast = false;
-
+    
 }
 
 

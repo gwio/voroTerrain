@@ -30,5 +30,7 @@ public:
     TerrainGen terrainGenerator;
     vector<ofVec2f> voroStartPoints;
     
-        
+    bool switchWire;
+    
+    ofFbo screen;
 };

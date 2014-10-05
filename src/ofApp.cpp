@@ -1,11 +1,11 @@
 #include "ofApp.h"
 //1500 seems ok
-#define CELLS 100
+#define CELLS 1500
 
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-        ofDisableAntiAliasing();
+    ofDisableAntiAliasing();
     ofEnableAlphaBlending();
     
     voroStartPoints.clear();
@@ -15,17 +15,15 @@ void ofApp::setup(){
     }
     
     
-    terrainGenerator.start(voroStartPoints,2,3,30);
+    terrainGenerator.start(voroStartPoints,2,3,50);
     
-  //  terrainGenerator.start(voroStartPoints,0,0,30);
-
-    
-   
+    //  terrainGenerator.start(voroStartPoints,0,0,30);
     
     
-   }
-
-
+    
+    switchWire = false;
+    
+}
 
 //--------------------------------------------------------------
 void ofApp::update(){
@@ -35,8 +33,8 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
     
-    ofBackground(ofColor::fromHsb(150, 55, 60));
-  //  ofBackground(ofColor::deepSkyBlue);
+    ofBackground(ofColor::deepSkyBlue);
+    //  ofBackground(ofColor::deepSkyBlue);
     
     //tempMesh.draw();
     
@@ -45,21 +43,16 @@ void ofApp::draw(){
     
     
     for (int i = 0; i < terrainGenerator.cellPoints.size(); i++) {
-       //terrainGenerator.cellPoints[i].drawCellMesh();
         
-        ofSetColor(255,255, 255,40);
-        
-        //terrainGenerator.cellPoints[i].drawCellPoint();
-        ofSetColor(200, 200, 200,50);
-        terrainGenerator.cellPoints[i].drawOwnVertex();
+        if (switchWire) {
+            terrainGenerator.cellPoints[i].drawWire();
+            
+        } else {
+            terrainGenerator.cellPoints[i].drawCellMesh();
+        }
         
     }
     
-    
-    
-    //cellPoints[counter%cellPoints.size()].drawOwnVertex();
-    
-    // cellPoints[counter%cellPoints.size()].drawNeighbours();
     
     
     
@@ -75,13 +68,13 @@ void ofApp::draw(){
     ofPopStyle();
     
     
-   
+    
     
     for (int i = 0; i < terrainGenerator.edges.size(); i++) {
         if (terrainGenerator.edges.at(i).isCoast) {
             ofSetColor(ofColor::mediumSpringGreen );
-
-        terrainGenerator.edges.at(i).drawEdge();
+            
+            terrainGenerator.edges.at(i).drawEdge();
         }
     }
     
@@ -90,28 +83,38 @@ void ofApp::draw(){
         terrainGenerator.coastLines[i].draw();
     }
     
-    for (int i = 0; i < terrainGenerator.vertexPoints.size(); i++) {
-        if (terrainGenerator.vertexPoints.at(i).coastEdges == 2) {
-            ofSetColor(ofColor::blue);
-        } else if (terrainGenerator.vertexPoints.at(i).coastEdges < 2)  {
-            ofSetColor(ofColor::red);
-        }
-        ofEllipse(terrainGenerator.vertexPoints.at(i).point, 6, 6);
-    }
-    //voroMesh.drawWireframe();
-    ofSetColor(255);
-    // ofDrawBitmapString( "vertices "+ ofToString(cellPoints[counter%cellPoints.size()].ownVertex.size())+ "  id:"+ofToString(cellPoints[counter%cellPoints.size()].iD), 40, 40);
+    
+    /*
+     for (int i = 0; i < terrainGenerator.vertexPoints.size(); i++) {
+     if (terrainGenerator.vertexPoints.at(i).coastEdges == 2) {
+     ofSetColor(ofColor(0, 0, 255,50));
+     } else if (terrainGenerator.vertexPoints.at(i).coastEdges < 2)  {
+     ofSetColor(ofColor(255, 0, 0,50));
+     }
+     ofEllipse(terrainGenerator.vertexPoints.at(i).point, 6, 6);
+     }
+     //
+     //voroMesh.drawWireframe();
+     ofSetColor(255,50);
+     // ofDrawBitmapString( "vertices "+ ofToString(cellPoints[counter%cellPoints.size()].ownVertex.size())+ "  id:"+ofToString(cellPoints[counter%cellPoints.size()].iD), 40, 40);
+     
+     */
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-
+    
     
     if (key == 's' ){
         ofImage temp;
         temp.grabScreen(0, 0, ofGetWidth(), ofGetHeight());
-        temp.resize(ofGetWidth()/2, ofGetHeight()/2);
+        temp.resize(ofGetWidth(), ofGetHeight());
         temp.saveImage( ofToString( ofGetElapsedTimef()+ofRandom(1000))+ ".png");
+    }
+    
+    if (key == '1') {
+        switchWire = !switchWire;
     }
 }
 
