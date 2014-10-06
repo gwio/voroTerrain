@@ -1,6 +1,6 @@
 #include "ofApp.h"
 //1500 seems ok
-#define CELLS 20100
+#define CELLS 500
 
 
 //--------------------------------------------------------------
@@ -15,7 +15,7 @@ void ofApp::setup(){
     }
     
     
-    terrainGenerator.start(voroStartPoints,2,3,50);
+    terrainGenerator.start(voroStartPoints,3,4,50);
     
     //  terrainGenerator.start(voroStartPoints,0,0,30);
     
@@ -33,8 +33,7 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
     
-    ofBackground(ofColor::deepSkyBlue);
-    //  ofBackground(ofColor::deepSkyBlue);
+      ofBackground(ofColor::deepSkyBlue);
     
     //tempMesh.draw();
     
@@ -80,6 +79,8 @@ void ofApp::draw(){
     
     for (int i = 0; i < terrainGenerator.coastLines.size(); i++) {
         ofSetColor(ofColor::orangeRed );
+        ofSetColor(ofColor::black );
+        ofSetLineWidth(2);
         terrainGenerator.coastLines[i].draw();
     }
     
@@ -136,7 +137,13 @@ void ofApp::mouseDragged(int x, int y, int button){
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
     
-    
+    voroStartPoints.clear();
+    for (int i= 0; i < CELLS; i++) {
+        ofVec2f    tPoint = ofVec2f(ofRandom(ofGetWidth()), ofRandom(ofGetHeight()));
+        voroStartPoints.push_back(tPoint);
+    }
+    terrainGenerator.start(voroStartPoints,3,4,50);
+
 }
 
 //--------------------------------------------------------------

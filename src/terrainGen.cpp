@@ -18,7 +18,6 @@ void TerrainGen::start(vector<ofVec2f> voroStartPoints_, int waterCells_, int co
     voroStartPoints.clear();
     counter = 0;
     voroStartPoints = voroStartPoints_;
-    
     //make a function, and 3* smooth cell centroid -> voronoiStartPoint
     for (int i = 0; i < 3 ; i++) {
         generateVoro(voroStartPoints);
@@ -431,7 +430,7 @@ void TerrainGen::terrainSetWater(int loneWaterCells, int coastPass) {
             for (int j = 0; j < cellPoints[i].ownEdges.size(); j++) {
                 if ( ((cellPoints[i].ownEdges[j]->cellA->water) || (cellPoints[i].ownEdges[j]->cellB->water)) ){
                     cellPoints[i].elevation = 0;
-                    cellPoints[i].hasHeight = true;
+                    cellPoints[i].hasHeight = false;
                     cellPoints[i].setCellColor(ofColor::burlyWood);
                     cellPoints[i].isCoast = true;
                     break;
@@ -469,6 +468,7 @@ void TerrainGen::terrainSetWater(int loneWaterCells, int coastPass) {
 }
 
 void TerrainGen::terrainSetElevation() {
+    float colorVal = ofRandom(255);
     
     for (int i = 0; i < cellPoints.size(); i++) {
         float distToCoast = 100000*1000;
@@ -489,7 +489,7 @@ void TerrainGen::terrainSetElevation() {
             float elevationTemp = ofMap(distToCoast, 0, 400, 50, 255);
             cellPoints[i].elevation = elevationTemp;
             cellPoints[i].hasHeight = true;
-            cellPoints[i].setCellColor(ofColor::fromHsb( 40, 205-elevationTemp,elevationTemp*1.4));
+            cellPoints[i].setCellColor(ofColor::fromHsb( colorVal, 205-elevationTemp,elevationTemp*1.4));
         }
     }
     
@@ -525,6 +525,8 @@ bool TerrainGen::checkCoast(ofVec2f p_) {
 
 
 void TerrainGen::findCoastLines(vector<CellPoint>* cellPoints_) {
+    
+    coastLines.clear();
     
     int debugCounter = 0;
     
