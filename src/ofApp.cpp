@@ -1,6 +1,6 @@
 #include "ofApp.h"
 //1500 seems ok
-#define CELLS 500
+#define CELLS 1500
 
 
 //--------------------------------------------------------------
@@ -35,12 +35,13 @@ void ofApp::draw(){
     
       ofBackground(ofColor::deepSkyBlue);
     
+  //  ofBackground(0, 0, 0,0);
     //tempMesh.draw();
     
     
     
     
-    
+ /*
     for (int i = 0; i < terrainGenerator.cellPoints.size(); i++) {
         
         if (switchWire) {
@@ -51,7 +52,7 @@ void ofApp::draw(){
         }
         
     }
-    
+    */
     
     
     
@@ -68,7 +69,7 @@ void ofApp::draw(){
     
     
     
-    
+   /*
     for (int i = 0; i < terrainGenerator.edges.size(); i++) {
         if (terrainGenerator.edges.at(i).isCoast) {
             ofSetColor(ofColor::mediumSpringGreen );
@@ -83,7 +84,13 @@ void ofApp::draw(){
         ofSetLineWidth(2);
         terrainGenerator.coastLines[i].draw();
     }
+    */
     
+    terrainGenerator.terrainMap.draw(0, 0);
+    
+    terrainGenerator.rockMap.draw(0, 0);
+    terrainGenerator.treeMap.draw(0, 0);
+
     
     /*
      for (int i = 0; i < terrainGenerator.vertexPoints.size(); i++) {

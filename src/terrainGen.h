@@ -64,13 +64,21 @@ public:
     vector<ofPolyline> rivers;
     
     int highestCell;
+    void findCoastLines(vector<CellPoint>*);
 
     
     //for use in forest game
     
     vector<ofPolyline> coastLines;
     
-    void findCoastLines(vector<CellPoint>*);
+    
+    void makeObjectMap();
+    ofFbo tempFbo;
+    
+    ofImage terrainMap;
+    ofImage rockMap;
+    ofImage treeMap;
+    
 };
 
 #endif /* defined(__voronoi_test__terrainGen__) */

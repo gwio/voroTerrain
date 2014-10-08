@@ -28,7 +28,7 @@ void TerrainGen::start(vector<ofVec2f> voroStartPoints_, int waterCells_, int co
     //add int random watercells, int add radnom watercell to coast, int number of rivers
     generateTerrain(waterCells_,coastPass_,rivers_);
     
-    
+    makeObjectMap();
     
 }
 
@@ -378,7 +378,7 @@ void TerrainGen::terrainSetWater(int loneWaterCells, int coastPass) {
                 cellPoints[i].water = true;
                 cellPoints[i].elevation = -10;
                 cellPoints[i].hasHeight = true;
-                cellPoints[i].setCellColor(ofColor::deepSkyBlue);
+                cellPoints[i].setCellColor(ofColor(0,0,255));
                 break;
             }
         }
@@ -393,7 +393,7 @@ void TerrainGen::terrainSetWater(int loneWaterCells, int coastPass) {
                 cellPoints[(i+cellCounter)%voroStartPoints.size()].water = true;
                 cellPoints[(i+cellCounter)%voroStartPoints.size()].elevation = -10;
                 cellPoints[(i+cellCounter)%voroStartPoints.size()].hasHeight = true;
-                cellPoints[(i+cellCounter)%voroStartPoints.size()].setCellColor(ofColor::deepSkyBlue);
+                cellPoints[(i+cellCounter)%voroStartPoints.size()].setCellColor(ofColor(0,0,255));
             }
         }
     }
@@ -408,13 +408,13 @@ void TerrainGen::terrainSetWater(int loneWaterCells, int coastPass) {
                         cellPoints[i].ownEdges[j]->cellA->water = true;
                         cellPoints[i].ownEdges[j]->cellA->elevation = -10;
                         cellPoints[i].ownEdges[j]->cellA->hasHeight = true;
-                        cellPoints[i].ownEdges[j]->cellA->setCellColor(ofColor::deepSkyBlue);
+                        cellPoints[i].ownEdges[j]->cellA->setCellColor(ofColor(0,0,255));
                     }
                     if (!cellPoints[i].ownEdges[j]->cellB->water) {
                         cellPoints[i].ownEdges[j]->cellB->water = true;
                         cellPoints[i].ownEdges[j]->cellB->elevation = -10;
                         cellPoints[i].ownEdges[j]->cellB->hasHeight = true;
-                        cellPoints[i].ownEdges[j]->cellB->setCellColor(ofColor::deepSkyBlue);
+                        cellPoints[i].ownEdges[j]->cellB->setCellColor(ofColor(0,0,255));
                     }
                 }
                 
@@ -486,10 +486,10 @@ void TerrainGen::terrainSetElevation() {
                 }
                 
             }
-            float elevationTemp = ofMap(distToCoast, 0, 400, 50, 255);
+            float elevationTemp = ofMap(distToCoast, 0, 300, 0, 255);
             cellPoints[i].elevation = elevationTemp;
             cellPoints[i].hasHeight = true;
-            cellPoints[i].setCellColor(ofColor::fromHsb( colorVal, 205-elevationTemp,elevationTemp*1.4));
+            cellPoints[i].setCellColor(ofColor::fromHsb( colorVal,0,elevationTemp));
         }
     }
     
@@ -589,14 +589,78 @@ void TerrainGen::findCoastLines(vector<CellPoint>* cellPoints_) {
         }
     }
     
+}
+
+void TerrainGen::makeObjectMap() {
+    tempFbo.allocate(ofGetWidth(), ofGetHeight(), GL_RGBA );
+    
+    //hightMap
+    tempFbo.begin();
+    ofClear(0, 0, 255, 255);
+    for (int i = 0; i < cellPoints.size(); i++) {
+        cellPoints[i].drawCellMesh();
+    }
+    tempFbo.end();
+    ofPixels pix;
+    pix.allocate(ofGetWidth(), ofGetHeight(), GL_RGBA);
+    tempFbo.readToPixels(pix);
+    terrainMap.setFromPixels(pix);
+    terrainMap.update();
+    
+    //rockMap______________________
+    rockMap.allocate(ofGetWidth(), ofGetHeight(), OF_IMAGE_COLOR_ALPHA);
+    int i = 0;
+    while ( i < rockMap.getPixelsRef().size() ) {
+        rockMap.getPixelsRef()[i] = 0;
+        rockMap.getPixelsRef()[i+1] = 0;
+        rockMap.getPixelsRef()[i+2] = 0;
+        rockMap.getPixelsRef()[i+3] = 0;
+        i+=4;
+    }
+    rockMap.update();
+    
+    ofColor temp;
+    for (int i = 0; i < terrainMap.width; i++) {
+        for (int j = 0; j < terrainMap.height; j++) {
+             temp = terrainMap.getColor(i, j);
+            if (  (ofRandom(255)+(temp.getBrightness()/5)) > 250)  {
+                if (temp != ofColor(0,0,255)) {
+                    rockMap.setColor(i, j, ofColor(255,0,0));
+                }
+            }
+        }
+    }
+    rockMap.update();
+    
+    //trees___________________
+    treeMap.allocate(ofGetWidth(), ofGetHeight(), OF_IMAGE_COLOR_ALPHA);
+     i = 0;
+    while ( i < treeMap.getPixelsRef().size() ) {
+        treeMap.getPixelsRef()[i] = 0;
+        treeMap.getPixelsRef()[i+1] = 0;
+        treeMap.getPixelsRef()[i+2] = 0;
+        treeMap.getPixelsRef()[i+3] = 0;
+        i+=4;
+    }
+    treeMap.update();
+    
+    ofColor rockColor;
+    for (int i = 0; i < terrainMap.width; i++) {
+        for (int j = 0; j < terrainMap.height; j++) {
+            temp = terrainMap.getColor(i, j);
+            if (temp != ofColor(0,0,255)) {
+                rockColor = rockMap.getColor(i, j);
+                
+                if (rockColor != ofColor(255,0,0)) {
+                    if ( ofRandom(100+temp.getBrightness()*3)  < 40   ) {
+                        treeMap.setColor(i, j, ofColor(0,255,0));
+                    }
+                }
+            }
+        }
+    }
     
     
-    
-    
-    
-    
-    
-    
-    
+    treeMap.update();
     
 }
