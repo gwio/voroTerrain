@@ -33,4 +33,7 @@ public:
     bool switchWire;
     
     ofFbo screen;
+    ofPixels pix;
+    ofImage wholeImg;
+
 };

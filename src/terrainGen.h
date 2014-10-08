@@ -26,10 +26,10 @@ struct cellDist {
 class TerrainGen {
     
 public:
-    //add int random watercells, int add radnom watercell to coast, int number of rivers
+    //add width, height, startPoints vector, int random watercells, int add radnom watercell to coast, int number of rivers
     TerrainGen();
 
-    void start(vector<ofVec2f>,int,int,int);
+    void start(int,int,vector<ofVec2f>,int,int,int);
     
     //basic voronoi stuff
     ofxVoronoi2D voronoi;
@@ -74,9 +74,12 @@ public:
     
     void makeObjectMap();
     ofFbo tempFbo;
+    ofPixels pixTemp;
     
     ofImage terrainMap;
-    ofImage rockMap;
+    ofImage waterMap;
+    ofImage coastMap;
+    
     ofImage treeMap;
     
 };
