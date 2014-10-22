@@ -72,7 +72,9 @@ void CellPoint::makeCellMesh() {
         
     }
     
-    centroid = cellMesh.getCentroid();
+    if (ownEdges.size() != 0) {
+        centroid = cellMesh.getCentroid();
+    }
 }
 
 void CellPoint::drawCellMesh() {

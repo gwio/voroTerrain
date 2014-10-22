@@ -345,7 +345,6 @@ void TerrainGen::generateTerrain(int waterCells, int coastPass, int rivers_) {
     
     for (int i = 0; i < vertexPoints.size(); i++) {
         if (vertexPoints[i].coastEdges > 2) {
-            cout << "coastLines" << endl;
             coastTest = true;
             for (int j = 0; j < vertexPoints[i].ownCells.size(); j++) {
                 vertexPoints[i].ownCells.at(j)->water = true;
@@ -552,7 +551,6 @@ void TerrainGen::findCoastLines(vector<CellPoint>* cellPoints_) {
             
             while ((currentPoint != endPoint) && (debugCounter < 100000)){
                 debugCounter++;
-                //  cout << debugCounter << endl;
                 
                 for (int j = 0; j < currentPoint->ownEdges.size(); j++) {
                     
@@ -563,7 +561,6 @@ void TerrainGen::findCoastLines(vector<CellPoint>* cellPoints_) {
                             currentEdge = currentPoint->ownEdges.at(j);
                             currentPoint = currentPoint->ownEdges.at(j)->ptA;
                             currentEdge->coastHasPath = true;
-                            cout << currentPoint->coastEdges << endl;
                             
                             break;
                         }
@@ -574,7 +571,6 @@ void TerrainGen::findCoastLines(vector<CellPoint>* cellPoints_) {
                             currentEdge = currentPoint->ownEdges.at(j);
                             currentPoint = currentPoint->ownEdges.at(j)->ptB;
                             currentEdge->coastHasPath = true;
-                            cout << currentPoint->coastEdges << endl;
                             
                             break;
                         }
@@ -619,7 +615,7 @@ void TerrainGen::makeObjectMap() {
         cellPoints[i].drawCellMesh();
     }
     tempFbo.end();
-   // pixTemp.allocate(voroRect.width, voroRect.height, GL_RGB);
+    pixTemp.clear();
     tempFbo.getTextureReference().readToPixels(pixTemp);
     terrainMap.setFromPixels(pixTemp);
     terrainMap.update();
