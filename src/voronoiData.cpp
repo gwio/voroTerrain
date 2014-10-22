@@ -17,6 +17,7 @@ CellPoint::CellPoint(ofVec2f point_, int id_) {
     ownVertex.clear();
     ownEdges.clear();
     cellMesh.clear();
+    centroid = ofVec2f(0,0);
     water = false;
     hasHeight = false;
     isCoast = false;
@@ -72,16 +73,14 @@ void CellPoint::makeCellMesh() {
         
     }
     
-    if (ownEdges.size() != 0) {
         centroid = cellMesh.getCentroid();
-    }
+    
 }
 
 void CellPoint::drawCellMesh() {
     
     if (cellMesh.getNumVertices() != 0) {
         cellMesh.draw();
-        //cellMesh.drawWireframe();
     }
 }
 

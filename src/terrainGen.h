@@ -6,8 +6,8 @@
 //
 //
 
-#ifndef __voronoi_test__terrainGen__
-#define __voronoi_test__terrainGen__
+#pragma once
+
 
 #include "ofMain.h"
 #include "voronoiData.h"
@@ -84,4 +84,3 @@ public:
     
 };
 
-#endif /* defined(__voronoi_test__terrainGen__) */

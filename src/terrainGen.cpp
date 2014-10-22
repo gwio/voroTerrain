@@ -9,7 +9,7 @@
 #include "terrainGen.h"
 
 TerrainGen::TerrainGen() {
-    
+   
 }
 
 
@@ -31,6 +31,7 @@ void TerrainGen::start(int w_, int h_, vector<ofVec2f> voroStartPoints_, int wat
     generateTerrain(waterCells_,coastPass_,rivers_);
     
     makeObjectMap();
+    
     
 }
 

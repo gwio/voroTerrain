@@ -6,9 +6,7 @@
 //
 //
 
-#ifndef __voronoi_test__voronoiData__
-#define __voronoi_test__voronoiData__
-
+#pragma once
 
 #include "ofMain.h"
 
@@ -76,4 +74,3 @@ public:
     bool coastHasPath;
 };
 
-#endif /* defined(__voronoi_test__voronoiData__) */
