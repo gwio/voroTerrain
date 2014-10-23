@@ -1,11 +1,3 @@
-//
-//  voronoiData.cpp
-//  voronoi_test
-//
-//  Created by Christian Gwiozda on 08.08.14.
-//
-//
-
 #include "voronoiData.h"
 
 //---------------------------------------------------------------------

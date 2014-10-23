@@ -1,11 +1,3 @@
-//
-//  voronoiData.h
-//  voronoi_test
-//
-//  Created by Christian Gwiozda on 08.08.14.
-//
-//
-
 #pragma once
 
 #include "ofMain.h"

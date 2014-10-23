@@ -1,11 +1,3 @@
-//
-//  terrainGen.h
-//  voronoi_test
-//
-//  Created by Christian Gwiozda on 19.08.14.
-//
-//
-
 #pragma once
 
 
