@@ -32,6 +32,7 @@ public:
     float elevation;
     bool isCoast;
     bool riverStart;
+    bool hasRiver;
    };
 
 //---------------------------------------------------------------------

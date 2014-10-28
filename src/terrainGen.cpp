@@ -12,7 +12,7 @@ void TerrainGen::start(int w_, int h_, vector<ofVec2f> voroStartPoints_, int wat
     voroStartPoints = voroStartPoints_;
     voroRect = ofRectangle(0, 0, w_, h_);
 
-    //make a function, and 3* smooth cell centroid -> voronoiStartPoint
+   //3* smooth cell centroid -> voronoiStartPoint
     for (int i = 0; i < 3 ; i++) {
         generateVoro(voroStartPoints);
     }
@@ -38,18 +38,11 @@ void TerrainGen::generateVoro( vector<ofVec2f> startPoints_) {
     
     //add cell points
     
-    
     for (int i = 0; i < startPoints_.size(); i++) {
-        
-        cellPoints.push_back( CellPoint(startPoints_.at(i),i) );
-        
-        //  pointBag.push_back();
-        
-        
+        cellPoints.push_back( CellPoint(startPoints_.at(i),i) );        
     }
     
-    
-    
+ 
     voronoi.compute(startPoints_, voroRect, 1.0);
     
     
@@ -72,7 +65,6 @@ void TerrainGen::generateVoro( vector<ofVec2f> startPoints_) {
         
         //hmm vielleicht doch float
         if ( pointA != pointB) {
-            
             
             testA = false;
             for (int  i = 0; i < vertexPoints.size(); i++) {
@@ -99,14 +91,8 @@ void TerrainGen::generateVoro( vector<ofVec2f> startPoints_) {
                 vertexPoints.push_back(pointB);
             }
             
-            
-            
         }
-        
     }
-    
-    
-    
     
     //add cellPoint* to vertexPoints
     //for each vertexPoint add the two nearest cellPoints
@@ -119,7 +105,6 @@ void TerrainGen::generateVoro( vector<ofVec2f> startPoints_) {
         cellCompare.clear();
         
         ofVec2f ptA,ptB;
-        
         
         string PAx = ofToString(s.p1.x,2);
         string PAy = ofToString(s.p1.y,2);
@@ -135,8 +120,6 @@ void TerrainGen::generateVoro( vector<ofVec2f> startPoints_) {
             ofVec2f ptC = ptA-ptB;
             float len = ptC.length()/2;
             ofVec2f ptX = ptA-((ptC.normalize())*len);
-            
-            
             
             for (int k = 0; k < cellPoints.size(); k++) {
                 cellDist temp;
@@ -251,7 +234,6 @@ void TerrainGen::generateVoro( vector<ofVec2f> startPoints_) {
     voroStartPoints.clear();
     
     for (int i = 0; i < cellPoints.size(); i++) {
-        
         voroStartPoints.push_back(cellPoints[i].centroid);
     }
     
@@ -299,6 +281,7 @@ void TerrainGen::generateRivers(int num_) {
         for (int i = 0; i < 40; i++) {
             
             riverPoints[k].push_back(next->point);
+            next->hasRiver = true;
             
             if (next->water) {
                 riverPoints[k].push_back(next->point);
@@ -316,7 +299,7 @@ void TerrainGen::generateRivers(int num_) {
         
         
         for(int a = 0; a < cellPoints.size(); a++) {
-            if ( (!cellPoints[a].water) && (!cellPoints[a].riverStart) && (cellPoints[a].elevation > (cellPoints[highestCell].elevation*0.7)) ){
+            if ( (!cellPoints[a].hasRiver) && (!cellPoints[a].water) && (!cellPoints[a].riverStart) && (cellPoints[a].elevation > (cellPoints[highestCell].elevation*0.7)) ){
                 thatcell = a;
                 cellPoints[a].riverStart = true;
                 break;
@@ -339,6 +322,7 @@ void TerrainGen::generateTerrain(int waterCells, int coastPass, int rivers_) {
     for (int i = 0; i < vertexPoints.size(); i++) {
         if (vertexPoints[i].coastEdges > 2) {
             coastTest = true;
+            cout << " Coast with more than 2 points" << endl;
             for (int j = 0; j < vertexPoints[i].ownCells.size(); j++) {
                 vertexPoints[i].ownCells.at(j)->water = true;
             }
