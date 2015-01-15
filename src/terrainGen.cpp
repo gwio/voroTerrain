@@ -298,12 +298,20 @@ void TerrainGen::generateRivers(int num_) {
         }
         
         
+        bool exit = false;
         for(int a = 0; a < cellPoints.size(); a++) {
             if ( (!cellPoints[a].hasRiver) && (!cellPoints[a].water) && (!cellPoints[a].riverStart) && (cellPoints[a].elevation > (cellPoints[highestCell].elevation*0.7)) ){
                 thatcell = a;
                 cellPoints[a].riverStart = true;
+                exit = false;
                 break;
+            } else {
+                exit = true;
             }
+        }
+        
+        if (exit) {
+            break;
         }
     }
     
