@@ -1,7 +1,7 @@
 #include "terrainGen.h"
 
 TerrainGen::TerrainGen() {
-   
+    
 }
 
 
@@ -11,15 +11,15 @@ void TerrainGen::start(int w_, int h_, vector<ofVec2f> voroStartPoints_, int wat
     counter = 0;
     voroStartPoints = voroStartPoints_;
     voroRect = ofRectangle(0, 0, w_, h_);
-
-   //3* smooth cell centroid -> voronoiStartPoint
+    
+    //3* smooth cell centroid -> voronoiStartPoint
     for (int i = 0; i < 3 ; i++) {
         generateVoro(voroStartPoints);
     }
     
     //make terrain from voronoiData
     
-    //add int random watercells, int add radnom watercell to coast, int number of rivers
+    //add int random watercells, int add random watercell to coast, int number of rivers
     generateTerrain(waterCells_,coastPass_,rivers_);
     
     makeObjectMap();
@@ -39,10 +39,10 @@ void TerrainGen::generateVoro( vector<ofVec2f> startPoints_) {
     //add cell points
     
     for (int i = 0; i < startPoints_.size(); i++) {
-        cellPoints.push_back( CellPoint(startPoints_.at(i),i) );        
+        cellPoints.push_back( CellPoint(startPoints_.at(i),i) );
     }
     
- 
+    
     voronoi.compute(startPoints_, voroRect, 1.0);
     
     
@@ -525,7 +525,7 @@ void TerrainGen::findCoastLines(vector<CellPoint>* cellPoints_) {
     for (int i = 0; i < edges.size(); i++) {
         while (edges[i].isCoast && !edges[i].coastHasPath) {
             tempPLine.clear();
-
+            
             currentEdge = &edges[i];
             currentPoint = edges[i].ptA;
             endPoint = edges[i].ptB;
@@ -568,7 +568,7 @@ void TerrainGen::findCoastLines(vector<CellPoint>* cellPoints_) {
             //tempPLine.addVertex(endPoint);
             tempPLine.close();
             coastLines.push_back(tempPLine);
-
+            
         }
     }
     
@@ -606,60 +606,60 @@ void TerrainGen::makeObjectMap() {
     terrainMap.update();
     
     /*
-    //waterMap___________________________
-    tempFbo.begin();
-    ofClear(0,0,0);
-    for (int i = 0; i < cellPoints.size(); i++) {
-        if (cellPoints[i].water) {
-            cellPoints[i].drawCellMesh();
-        }
-    }
-    tempFbo.end();
-    pixTemp.clear();
-    tempFbo.readToPixels(pixTemp);
-    waterMap.setFromPixels(pixTemp);
-    waterMap.update();
-    
-    
-    //coastMap__________________________________
-    tempFbo.begin();
-    ofClear(255,255,255);
-    for (int i = 0; i < cellPoints.size(); i++) {
-        if (cellPoints[i].isCoast) {
-            cellPoints[i].drawCellMesh();
-        }
-    }
-    tempFbo.end();
-    pixTemp.clear();
-    tempFbo.readToPixels(pixTemp);
-    coastMap.update();
-    
-    //trees___________________
-    treeMap.allocate(voroRect.width, voroRect.height, OF_IMAGE_COLOR_ALPHA);
-    int i = 0;
-    while ( i < treeMap.getPixelsRef().size() ) {
-        treeMap.getPixelsRef()[i] = 0;
-        treeMap.getPixelsRef()[i+1] = 0;
-        treeMap.getPixelsRef()[i+2] = 0;
-        treeMap.getPixelsRef()[i+3] = 0;
-        i+=4;
-    }
-    treeMap.update();
-    
-    ofColor temp;
-    for (int i = 0; i < terrainMap.width; i++) {
-        for (int j = 0; j < terrainMap.height; j++) {
-            temp = terrainMap.getColor(i, j);
-            if (temp != ofColor(0,0,255)) {
-                    if ( ofRandom(100+temp.getBrightness()*3)  < 40   ) {
-                        treeMap.setColor(i, j, ofColor(0,255,0));
-                    }
-                
-            }
-        }
-    }
-    
-    
-    treeMap.update();
-    */
+     //waterMap___________________________
+     tempFbo.begin();
+     ofClear(0,0,0);
+     for (int i = 0; i < cellPoints.size(); i++) {
+     if (cellPoints[i].water) {
+     cellPoints[i].drawCellMesh();
+     }
+     }
+     tempFbo.end();
+     pixTemp.clear();
+     tempFbo.readToPixels(pixTemp);
+     waterMap.setFromPixels(pixTemp);
+     waterMap.update();
+     
+     
+     //coastMap__________________________________
+     tempFbo.begin();
+     ofClear(255,255,255);
+     for (int i = 0; i < cellPoints.size(); i++) {
+     if (cellPoints[i].isCoast) {
+     cellPoints[i].drawCellMesh();
+     }
+     }
+     tempFbo.end();
+     pixTemp.clear();
+     tempFbo.readToPixels(pixTemp);
+     coastMap.update();
+     
+     //trees___________________
+     treeMap.allocate(voroRect.width, voroRect.height, OF_IMAGE_COLOR_ALPHA);
+     int i = 0;
+     while ( i < treeMap.getPixelsRef().size() ) {
+     treeMap.getPixelsRef()[i] = 0;
+     treeMap.getPixelsRef()[i+1] = 0;
+     treeMap.getPixelsRef()[i+2] = 0;
+     treeMap.getPixelsRef()[i+3] = 0;
+     i+=4;
+     }
+     treeMap.update();
+     
+     ofColor temp;
+     for (int i = 0; i < terrainMap.width; i++) {
+     for (int j = 0; j < terrainMap.height; j++) {
+     temp = terrainMap.getColor(i, j);
+     if (temp != ofColor(0,0,255)) {
+     if ( ofRandom(100+temp.getBrightness()*3)  < 40   ) {
+     treeMap.setColor(i, j, ofColor(0,255,0));
+     }
+     
+     }
+     }
+     }
+     
+     
+     treeMap.update();
+     */
 }

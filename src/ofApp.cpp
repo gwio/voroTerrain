@@ -21,7 +21,7 @@ void ofApp::setup(){
     
     switchWire = false;
     
-  }
+}
 
 //--------------------------------------------------------------
 void ofApp::update(){
@@ -31,16 +31,16 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
     
-     ofBackground(ofColor::deepSkyBlue);
+    ofBackground(ofColor::deepSkyBlue);
     if (!switchWire) {
         
-    terrainGenerator.terrainMap.draw(0,0);
-    
+        terrainGenerator.terrainMap.draw(0,0);
+        
     }
     
     if (switchWire) {
         for (int i = 0; i < terrainGenerator.cellPoints.size(); i++) {
-          terrainGenerator.cellPoints[i].drawCellMesh();
+            terrainGenerator.cellPoints[i].drawCellMesh();
         }
         ofPushStyle();
         ofSetColor(255, 255, 255);
@@ -96,7 +96,7 @@ void ofApp::mousePressed(int x, int y, int button){
         voroStartPoints.push_back(tPoint);
     }
     terrainGenerator.start(mapSquareSize, mapSquareSize, voroStartPoints,3,4,50);
-
+    
 }
 
 //--------------------------------------------------------------
