@@ -17,6 +17,10 @@ CellPoint::CellPoint(ofVec2f point_, int id_) {
     ownVertex.clear();
     ownEdges.clear();
     cellMesh.clear();
+    water = false;
+    hasHeight = false;
+    isCoast = false;
+    riverStart = false;
 }
 
 void CellPoint::drawCellPoint() {
@@ -27,7 +31,7 @@ void CellPoint::drawCellPoint() {
 void CellPoint::drawOwnVertex() {
     
     for (int i = 0; i < ownVertex.size(); i++) {
-
+        
         ofLine(ownVertex[i]->point, point);
     }
 }
@@ -55,22 +59,47 @@ void CellPoint::makeCellMesh() {
     
     cellMesh.setMode(OF_PRIMITIVE_TRIANGLES);
     ofColor temp = ofColor::fromHsb(ofRandom(255), 100, 155);
-   
+    
     for (int i = 0; i < ownEdges.size(); i++) {
         cellMesh.addColor(temp);
         cellMesh.addVertex(point);
         
         cellMesh.addColor(temp);
         cellMesh.addColor(temp);
-
+        
         cellMesh.addVertex(ownEdges[i]->ptA->point);
         cellMesh.addVertex(ownEdges[i]->ptB->point);
-
+        
     }
+    
+    centroid = cellMesh.getCentroid();
 }
 
 void CellPoint::drawCellMesh() {
-    cellMesh.draw();
+    
+    if (cellMesh.getNumVertices() != 0) {
+        cellMesh.draw();
+        //cellMesh.drawWireframe();
+    }
+}
+
+void CellPoint::drawWire() {
+    
+    if (cellMesh.getNumVertices() != 0) {
+        cellMesh.drawWireframe();
+    }
+}
+
+void CellPoint::setCellColor(ofColor col_) {
+    
+    
+    
+    if (cellMesh.getNumVertices() != 0) {
+        cellMesh.clearColors();
+        for (int i = 0; i < cellMesh.getNumVertices(); i++) {
+            cellMesh.addColor(col_);
+        }
+    }
 }
 
 //---------------------------------------------------------------------
@@ -79,6 +108,8 @@ void CellPoint::drawCellMesh() {
 VertexPoint::VertexPoint(ofVec2f point_) {
     point = point_;
     ownCells.clear();
+    ownEdges.clear();
+    coastEdges = 0;
 }
 
 void VertexPoint::drawVertex() {
@@ -97,8 +128,11 @@ void VertexPoint::drawOwnCells() {
 
 
 VoroEdge::VoroEdge(){
-    
+    isCoast = false;
+    coastHasPath = false;
 }
+
+
 VoroEdge::VoroEdge(VertexPoint* v1, VertexPoint* v2, CellPoint* c1, CellPoint*c2) {
     
     ptA = v1;
@@ -106,6 +140,8 @@ VoroEdge::VoroEdge(VertexPoint* v1, VertexPoint* v2, CellPoint* c1, CellPoint*c2
     
     cellA = c1;
     cellB = c2;
+    
+    isCoast = false;
 }
 
 void VoroEdge::drawEdge() {
