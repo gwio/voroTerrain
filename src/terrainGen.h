@@ -1,13 +1,4 @@
-//
-//  terrainGen.h
-//  voronoi_test
-//
-//  Created by Christian Gwiozda on 19.08.14.
-//
-//
-
-#ifndef __voronoi_test__terrainGen__
-#define __voronoi_test__terrainGen__
+# pragma once
 
 #include "ofMain.h"
 #include "voronoiData.h"
@@ -26,9 +17,9 @@ struct cellDist {
 class TerrainGen {
     
 public:
-    //add int random watercells, int add radnom watercell to coast, int number of rivers
+    //add int random watercells, int add random watercell to coast, int number of rivers
     TerrainGen();
-
+    
     void start(vector<ofVec2f>,int,int,int);
     
     //basic voronoi stuff
@@ -64,13 +55,9 @@ public:
     vector<ofPolyline> rivers;
     
     int highestCell;
-
-    
-    //for use in forest game
     
     vector<ofPolyline> coastLines;
     
     void findCoastLines(vector<CellPoint>*);
 };
 
-#endif /* defined(__voronoi_test__terrainGen__) */
